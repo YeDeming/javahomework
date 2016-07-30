@@ -8,27 +8,40 @@ import javax.swing.JOptionPane;
 
 import Ai.*;
 
-
 public class AiListener  extends FatherListener{
     int player_turn;
     FatherAi ai;
-
-    public AiListener(ChessState state,int player_turn){
+    Thread th;
+    public AiListener(ChessState state,int player_turn,int kind){
             super(state);
             this.player_turn = player_turn;
-            ai = new MCMutiAi(state,player_turn^1);
+            if (kind==1){
+                ai = new RandomAi(state,player_turn^1);
+                System.out.println("RandomAi selected");
+            }
+            else if (kind == 2){
+                ai = new MCAi(state,player_turn^1);
+                System.out.println("MCAi selected");
+            } else{
+                ai = new MCMutiAi(state,player_turn^1);
+                System.out.println("MCMutiAi selected");
+            }
+            th = new Thread(ai);
+            th.setDaemon(true);
     }
 
     public void start(){
-        ai.start();
+        th.start();
+        //ai.start();
     }
     public void stop(){
-        ai.stop();
+        th.stop();
     }
     public void next(int rawx, int rawy) {
         // TODO Auto-generated method stub
         if (player_turn!=state.turn)
             return;
+       if (rawx>=maxsize || rawy>=maxsize) return;
 
         int x = (rawx-border);
         int y = (rawy-border);

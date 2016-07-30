@@ -1,0 +1,48 @@
+<html><head>
+  <SCRIPT src="./web-files/dtjava.js"></SCRIPT>
+<script>
+    function launchApplication(jnlpfile) {
+        dtjava.launch(            {
+                url : 'BasicBoard.jnlp',
+                jnlp_content : 'PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPGpubHAgc3BlYz0iMS4wIiB4bWxuczpqZng9Imh0dHA6Ly9qYXZhZnguY29tIiBocmVmPSJCYXNpY0JvYXJkLmpubHAiPgogIDxpbmZvcm1hdGlvbj4KICAgIDx0aXRsZT5CYXNpY0JvYXJkPC90aXRsZT4KICAgIDx2ZW5kb3I+bWVlcG88L3ZlbmRvcj4KICAgIDxkZXNjcmlwdGlvbj5udWxsPC9kZXNjcmlwdGlvbj4KICAgIDxvZmZsaW5lLWFsbG93ZWQvPgogIDwvaW5mb3JtYXRpb24+CiAgPHJlc291cmNlcz4KICAgIDxqMnNlIHZlcnNpb249IjEuNisiIGhyZWY9Imh0dHA6Ly9qYXZhLnN1bi5jb20vcHJvZHVjdHMvYXV0b2RsL2oyc2UiLz4KICAgIDxqYXIgaHJlZj0iQmFzaWNCb2FyZC5qYXIiIHNpemU9IjU0NTQzIiBkb3dubG9hZD0iZWFnZXIiIC8+CiAgPC9yZXNvdXJjZXM+CiAgPGFwcGxpY2F0aW9uLWRlc2MgbWFpbi1jbGFzcz0iQ2hlc3NCb2FyZC5CYXNpY0JvYXJkIiAgbmFtZT0iQmFzaWNCb2FyZCIgPgogIDwvYXBwbGljYXRpb24tZGVzYz4KICA8dXBkYXRlIGNoZWNrPSJhbHdheXMiLz4KPC9qbmxwPgo='
+            },
+            {
+                javafx : '8.0+'
+            },
+            {}
+        );
+        return false;
+    }
+</script>
+
+<script>
+    function javafxEmbedChessBoard() {
+        dtjava.embed(
+            {
+                id : 'ChessBoard',
+                toolkit : 'swing',
+                url : 'BasicBoard_browser.jnlp',
+                placeholder : 'javafx-app-placeholder',
+                width : '800',
+                height : '600',
+                jnlp_content : 'PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPGpubHAgc3BlYz0iMS4wIiB4bWxuczpqZng9Imh0dHA6Ly9qYXZhZnguY29tIiBocmVmPSJCYXNpY0JvYXJkX2Jyb3dzZXIuam5scCI+CiAgPGluZm9ybWF0aW9uPgogICAgPHRpdGxlPkJhc2ljQm9hcmQ8L3RpdGxlPgogICAgPHZlbmRvcj5tZWVwbzwvdmVuZG9yPgogICAgPGRlc2NyaXB0aW9uPm51bGw8L2Rlc2NyaXB0aW9uPgogICAgPG9mZmxpbmUtYWxsb3dlZC8+CiAgPC9pbmZvcm1hdGlvbj4KICA8cmVzb3VyY2VzPgogICAgPGoyc2UgdmVyc2lvbj0iMS42KyIgaHJlZj0iaHR0cDovL2phdmEuc3VuLmNvbS9wcm9kdWN0cy9hdXRvZGwvajJzZSIvPgogICAgPGphciBocmVmPSJCYXNpY0JvYXJkLmphciIgc2l6ZT0iNTQ1NDMiIGRvd25sb2FkPSJlYWdlciIgLz4KICA8L3Jlc291cmNlcz4KICA8YXBwbGV0LWRlc2MgIHdpZHRoPSI4MDAiIGhlaWdodD0iNjAwIiBtYWluLWNsYXNzPSJDaGVzc0JvYXJkLkJhc2ljQm9hcmQiICBuYW1lPSJCYXNpY0JvYXJkIiA+CiAgPC9hcHBsZXQtZGVzYz4KICA8dXBkYXRlIGNoZWNrPSJhbHdheXMiLz4KPC9qbmxwPgo='
+            },
+            {
+                javafx : '8.0+'
+            },
+            {
+                onGetSplash : function() {}
+            }
+        );
+    }
+    <!-- Embed FX application into web page once page is loaded -->
+    dtjava.addOnloadCallback(javafxEmbedChessBoard);
+</script>
+
+</head><body>
+<h2>Test page for <b>BasicBoard</b></h2>
+  <b>Webstart:</b> <a href='BasicBoard.jnlp' onclick="return launchApplication('BasicBoard.jnlp');">click to launch this app as webstart</a><br><hr><br>
+
+  <!-- Applet will be inserted here -->
+  <div id='javafx-app-placeholder'></div>
+</body></html>

@@ -47,9 +47,9 @@ public class MyMenuBar extends JMenuBar implements ActionListener{
 		if (e.getSource()==(Object)newmenu){
 			state.restart();
 		} else if (e.getSource()==(Object)openmenu){
-			state.loadchess();
+			//state.loadchess();
 		} else if (e.getSource()==(Object)savemenu){
-			state.savechess();
+			//state.savechess();
 		} else if (e.getSource()==(Object)uodomenu){
 			state.backtohistory(1-state.turn);
 		} else if (e.getSource()==(Object)settingmenu){

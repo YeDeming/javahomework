@@ -7,6 +7,10 @@ import javax.swing.JOptionPane;
 import javafx.scene.paint.Color;  
 import javafx.scene.shape.*;  
 import javafx.event.*;
+import javafx.scene.Cursor;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+
 public class MyPanel extends Canvas {
     final static int border = ConstRec.border;
     final static int maxn = ConstRec.maxn;;
@@ -20,27 +24,37 @@ public class MyPanel extends Canvas {
     int mousex = -1,mousey = 0;
     private GraphicsContext gc;  
     FatherListener listener;
-  
+    ClickState clickmove;
+    Scene gamescene;
    public MyPanel(ChessState state, FatherListener listener){
-            super(maxsize,maxsize);
+            super(maxsize+100,maxsize);
             this.state = state;
             this.flag = state.flag;
             this.listener = listener;
             
             gc = getGraphicsContext2D();
-            //draw(gc);
-
+            
             setOnMouseMoved(new EventHandler<MouseEvent>(){
                     public void handle(MouseEvent me) {
                         mousex = (int) Math.round(me.getX());
                         mousey = (int) Math.round(me.getY());
-                        repaint();
+                        if (mousex>=maxsize){
+                            gamescene.setCursor(Cursor.CLOSED_HAND);
+                            repaint();
+                        } else{
+                            gamescene.setCursor(Cursor.DISAPPEAR);
+
+                            repaint();
+                        }
                     }
             });
             
             setOnMouseClicked(new EventHandler<MouseEvent>(){
                     public void handle(MouseEvent me) {
-                        listener.next((int) Math.round(me.getX()),(int) Math.round(me.getY()));
+                        int xx = (int) Math.round(me.getX());
+                        int yy = (int) Math.round(me.getY());
+                        listener.next(xx,yy);
+                        clickmove.play(xx, yy);
                     }
             });            
     }
@@ -50,8 +64,14 @@ public class MyPanel extends Canvas {
     }
  
 
-    public void draw(GraphicsContext gc){        
-            gc.clearRect(0, 0, getWidth(), getHeight());
+    public void draw(GraphicsContext gc){      
+            //gc.clearRect(0, 0, getWidth(), getHeight());
+            gc.setFill(Color.GREEN);	
+            gc.fillRect(0, 0, getWidth(),getHeight());
+            //gc.fillRect(0, 0, maxsize,maxsize);
+            //gc.setFill(Color.LIGHTYELLOW);
+            //gc.fillRect(maxsize, 0, 100,maxsize);
+
             gc.setStroke(Color.BLACK);  
             gc.setLineWidth(2); 
             for (int i = 0; i < maxn+1; ++ i){
@@ -97,7 +117,7 @@ public class MyPanel extends Canvas {
                             gc.setStroke(Color.WHITE);
                             gc.setFill(Color.WHITE);		
                     }
-                    
+                    if (mousex>=maxsize) return;
                     gc.setLineWidth(5);
                     gc.strokeOval(mousex-radius, mousey-radius, radius*2, radius*2);
    
@@ -123,18 +143,36 @@ public class MyPanel extends Canvas {
             }
     }
 
-    //public void gameover(int sum){
-     //       try{
-          //          if (sum==0)
-        //                   JOptionPane.showMessageDialog(this, "平局");
-         //           else if (sum>0)
-           //                 JOptionPane.showMessageDialog(this, "黑棋胜");
-              //      else {
-                 //           JOptionPane.showMessageDialog(this, "白棋胜");
-                   // }
-        //    } catch (Exception e1) {
-                    // TODO: handle exception
-           // }
-    //}
+    public void gameover(int sum){
+        System.out.println("gameover");
+        //AlertThread a= new AlertThread();
+        //a.sum = sum;
+        //a.start();
+        
+        try{
+                if (sum==0){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "平局");
+                    alert.showAndWait();
+                }
+                else if (sum>0){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "黑棋胜");
+                    alert.showAndWait();
+                }
+                else {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "白棋胜");
+                    alert.showAndWait();
+                  }
+        } catch (Exception e1) {
+                 //TODO: handle exception
+       }
+}
+
+    void setclick(ClickState clickmove) {
+        this.clickmove = clickmove;
+    }
+
+    void setscreen(Scene gamescreen) {
+        this.gamescene = gamescreen;
+    }
 
 }

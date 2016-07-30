@@ -5,19 +5,30 @@ import java.io.File;
 import java.util.*;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
+
+import javafx.stage.Stage;
 import javax.swing.JFrame;
 
 public class ChessState extends SampleChessState{
 
     public int history_chess[][][],history_turn[],history_count[];
-    public int backupwhite,backupblack,history_cnt;
-
+    public int history_cnt;
+    public Stage primaryStage;
+    public int backup[] = new int[2];
     MyPanel panel;
-    JFrame frame;
-    public ChessState(JFrame frame){
+    FileChooser fileChooser;
+    public int kind;
+   
+    public ChessState(Stage primaryStage){
             super();
-            this.frame = frame;
+            
+            fileChooser = new FileChooser();
+           fileChooser.getExtensionFilters().add(new ExtensionFilter("存档文件", "*.chess"));
+
+            this.primaryStage = primaryStage;
             for (int i = 0; i < maxn; ++ i)
                     for (int j = 0; j < maxn; ++j)
                             flag[i][j] = 2;
@@ -25,12 +36,16 @@ public class ChessState extends SampleChessState{
             history_turn = new int [maxn*maxn];
             history_count = new int [maxn*maxn];
 
-            backupblack = 0;
-            backupwhite = 0;
+            
 
     }
 
+    public void setKind(int kind) {
+        this.kind = kind;
+    }
+    
     public void restart(){
+        backup[0] = backup[1] = 0;
             start = true;
             for (int i = 0; i < maxn; ++ i)
                     for (int j = 0; j < maxn; ++j)
@@ -59,20 +74,24 @@ public class ChessState extends SampleChessState{
     }
 
     public void backtohistory(int backup_turn){
-            int tmp = history_cnt-1;
-            while (tmp>=0 && history_turn[tmp]!=backup_turn) tmp--;
-            if (tmp<0) return;
+        if (kind==0){
+             if (++backup[backup_turn]>2) return; 
+             
+        }
+        int tmp = history_cnt-1;
+        while (tmp>=0 && history_turn[tmp]!=backup_turn) tmp--;
+        if (tmp<0) return;
 
-            history_cnt = tmp+1;
-            count = history_count[tmp];
-            turn = history_turn[tmp] ;
+        history_cnt = tmp+1;
+        count = history_count[tmp];
+        turn = history_turn[tmp] ;
 
-            for (int i = 0; i < maxn; ++ i)
-                    flag[i] = history_chess[tmp][i].clone();
+        for (int i = 0; i < maxn; ++ i)
+                flag[i] = history_chess[tmp][i].clone();
 
 
-            updateavaid();
-            panel.repaint();
+        updateavaid();
+        panel.repaint();
     }
 
     public void setPanel(MyPanel panel) {
@@ -124,8 +143,11 @@ public class ChessState extends SampleChessState{
 
             if (avaidcnt==0) pass();
 
-            if (count==maxn*maxn || avaidcnt == 0){		
-                    //panel.gameover(getwinner());
+            
+            if (count==maxn*maxn || avaidcnt == 0){	
+                finish = getwinner();
+
+                panel.gameover(finish);
             }
     }
 
@@ -137,15 +159,12 @@ public class ChessState extends SampleChessState{
     }
 
     public void loadchess() {
-            FileDialog fd = new FileDialog(frame, "载入存档", FileDialog.LOAD);
-            fd.setVisible(true);
-    if (fd.getFile()==null) return;   //若点击取消则不进行载入
-
-        File file = new File(fd.getDirectory()+fd.getFile());
-            start = true;
+    File file = fileChooser.showOpenDialog(primaryStage.getOwner());
+        if (file == null) return;
 
         try{
             Scanner console = new Scanner(file);
+            kind = console.nextInt();
             turn = console.nextInt();
             for (int i = 0; i < maxn; ++ i)
             {
@@ -166,12 +185,13 @@ public class ChessState extends SampleChessState{
     }
 
     public void savechess(){
-            FileDialog fd = new FileDialog(frame, "保存存档", FileDialog.SAVE);
-            fd.setVisible(true);
-    if (fd.getFile()==null) return;   //若点击取消则不进行保存
-        File file = new File(fd.getDirectory()+fd.getFile()+".chess");
+         
+        File file = fileChooser.showSaveDialog(primaryStage.getOwner());
+        if (file == null) return;
+
             try{
                     PrintStream out = new PrintStream(file);
+                    out.println(kind);
                     out.println(turn);
                     for (int i = 0; i < maxn; ++ i)
                     {
