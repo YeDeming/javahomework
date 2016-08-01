@@ -22,6 +22,7 @@ public class TCPServer extends Task<Integer>{
     BufferedReader brInFromeClinet;
     boolean xianshou;
     TCPListener listener;
+    BasicBoard basicBoard;
     public TCPServer(ChessState state,int port,boolean xianshou) throws Exception{
         this.state = state;
         this.port =port;
@@ -29,6 +30,10 @@ public class TCPServer extends Task<Integer>{
         if (xianshou) myturn = 0;
         else myturn = 1;
     }        
+
+    public void setBasicBoard(BasicBoard basicBoard) {
+        this.basicBoard = basicBoard;
+    }
 
     @Override 
     protected Integer call() throws Exception {
@@ -44,20 +49,39 @@ public class TCPServer extends Task<Integer>{
 
         while (state.finish==-2){
                 strSocket = brInFromeClinet.readLine();
+                System.out.println("Server receive: " + strSocket);
+
                 if (state.finish!=-2) break;
                 if (strSocket==null) continue;
                 String[] args = strSocket.split(" ");
-                state.set(Integer.valueOf(args[0]),Integer.valueOf(args[1]));				
+                if (args[0].equals("set"))
+                    state.set(Integer.valueOf(args[1]),Integer.valueOf(args[2]));
+                else if (args[0].equals("hui")){
+                    basicBoard.message_hui();
+                } else if (args[0].equals("nohui")){
+                    basicBoard.quxiao();
+                } else if (args[0].equals("yeshui")){
+                    basicBoard.quxiao();
+                    state.backtohistory(myturn);
+                }
+                
         }
         return 0;
     }
     
     public void sendmessage(int x,int y) {
-            String string = x + " " + y + "\n";
+            String string = "set " + x + " " + y + "\n";
             try{
                     dosOutToClient.writeBytes(string);
             }catch (Exception e){
+            }
+    }
 
+    public void sendmessage(String str) {
+        String string = str+ "\n";
+            try{
+                    dosOutToClient.writeBytes(string);
+            }catch (Exception e){
             }
     }
 } 

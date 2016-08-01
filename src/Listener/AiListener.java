@@ -10,12 +10,12 @@ import Ai.*;
 import ChessBoard.ChessState;
 
 public class AiListener  extends FatherListener{
-    int player_turn;
+
     public FatherAi ai;
     Thread th;
     public AiListener(ChessState state,int player_turn,int kind){
-            super(state);
-            this.player_turn = player_turn;
+            super(state,player_turn);
+
             if (kind==1){
                 ai = new RandomAi(state,player_turn^1);
                 System.out.println("RandomAi selected");
@@ -53,6 +53,7 @@ public class AiListener  extends FatherListener{
 
         if (state.flag[x][y]!=2) return;
         state.set(x,y);
+           huiButton.setDisable(false);
 
 }
 

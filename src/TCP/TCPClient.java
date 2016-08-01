@@ -24,12 +24,18 @@ public class TCPClient extends Task<Integer>{
     String ip;
     int port;
     TCPListener listener;
+    BasicBoard basicBoard;
+    
     public TCPClient(ChessState state,String ip,int port,TCPListener listener) throws Exception{
         this.state = state;
         this.ip = ip;
         this.port = port;
         this.listener = listener;
     }        
+
+    public void setBasicBoard(BasicBoard basicBoard) {
+        this.basicBoard = basicBoard;
+    }
 
     @Override 
     protected Integer call() throws Exception {
@@ -50,10 +56,18 @@ public class TCPClient extends Task<Integer>{
                 if (state.finish!=-2) break;
 
                 if (strSocket==null) continue;
-                System.out.println("Client receive:" + strSocket);
+                System.out.println("Client receive: " + strSocket);
                 String[] args = strSocket.split(" ");
-
-                state.set(Integer.valueOf(args[0]),Integer.valueOf(args[1]));
+                if (args[0].equals("set"))
+                    state.set(Integer.valueOf(args[1]),Integer.valueOf(args[2]));
+                else if (args[0].equals("hui")){
+                    basicBoard.message_hui();
+                }   else if (args[0].equals("nohui")){
+                    basicBoard.quxiao();
+                } else if (args[0].equals("yeshui")){
+                    basicBoard.quxiao();
+                    state.backtohistory(myturn);
+                }
         }
 
         socketClient.close();
@@ -62,12 +76,18 @@ public class TCPClient extends Task<Integer>{
     }
     
     public void sendmessage(int x,int y) {
-        String string = x + " " + y + "\n";
+            String string = "set " + x + " " + y + "\n";
+            try{
+                    dosOutToServer.writeBytes(string);
+            }catch (Exception e){
+            }
+    }
 
-        try{
-                dosOutToServer.writeBytes(string);
-        }catch (Exception e){
-
-        }
+    public void sendmessage(String str) {
+        String string = str+ "\n";
+            try{
+                    dosOutToServer.writeBytes(string);
+            }catch (Exception e){
+            }
     }
 } 

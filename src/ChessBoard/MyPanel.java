@@ -28,7 +28,10 @@ public class MyPanel extends Canvas {
     FatherListener listener;
     ClickState clickmove;
     Scene gamescene;
-   public MyPanel(ChessState state, FatherListener listener){
+    int finish = -2;
+   BasicBoard basicBoard;
+   public boolean dark = false;
+    public MyPanel(ChessState state, FatherListener listener){
             super(maxsize+100,maxsize);
             this.state = state;
             this.flag = state.flag;
@@ -38,6 +41,7 @@ public class MyPanel extends Canvas {
             
             setOnMouseMoved(new EventHandler<MouseEvent>(){
                     public void handle(MouseEvent me) {
+                        if (dark) return;
                         mousex = (int) Math.round(me.getX());
                         mousey = (int) Math.round(me.getY());
                         if (mousex>=maxsize){
@@ -45,7 +49,6 @@ public class MyPanel extends Canvas {
                             repaint();
                         } else{
                             gamescene.setCursor(Cursor.DISAPPEAR);
-
                             repaint();
                         }
                     }
@@ -53,6 +56,8 @@ public class MyPanel extends Canvas {
             
             setOnMouseClicked(new EventHandler<MouseEvent>(){
                     public void handle(MouseEvent me) {
+                        if (finish!=-2) return;
+
                         int xx = (int) Math.round(me.getX());
                         int yy = (int) Math.round(me.getY());
                         listener.next(xx,yy);
@@ -64,17 +69,22 @@ public class MyPanel extends Canvas {
     public void repaint(){
             draw(gc);  
     }
- 
 
+    public void setBasicBoard(BasicBoard basicBoard) {
+        this.basicBoard = basicBoard;
+    }
+ 
+    
     public void draw(GraphicsContext gc){      
             //gc.clearRect(0, 0, getWidth(), getHeight());
-            gc.setFill(Color.GREEN);	
+            if (dark)
+                gc.setFill(Color.DARKGREEN);
+            else
+                gc.setFill(Color.GREEN);	
             gc.fillRect(0, 0, getWidth(),getHeight());
-            //gc.fillRect(0, 0, maxsize,maxsize);
-            //gc.setFill(Color.LIGHTYELLOW);
-            //gc.fillRect(maxsize, 0, 100,maxsize);
-
+            
             gc.setStroke(Color.BLACK);  
+            
             gc.setLineWidth(2); 
             for (int i = 0; i < maxn+1; ++ i){
                     int x = border+gridsize*i;
@@ -91,6 +101,9 @@ public class MyPanel extends Canvas {
                                 gc.setFill(Color.BLACK);                                      
                                 gc.fillOval(circle_x,circle_y,gridsize-2,gridsize-2);
                             } else if (flag[i][j]==1){
+                                    if (dark)
+                                        gc.setFill(Color.LIGHTGRAY);
+                                    else
                                     gc.setFill(Color.WHITE);		
                                     gc.fillOval(circle_x,circle_y,gridsize-2,gridsize-2);
                             }
@@ -108,6 +121,10 @@ public class MyPanel extends Canvas {
                     gc.fillOval(circle_x,circle_y,gridsize-control_redpointsize*2,gridsize-control_redpointsize*2);
 
             }
+            if (dark){
+                gc.setFill(Color.WHITE);
+                gc.fillRect(maxsize/4+border, maxsize/3+border, maxsize/2, maxsize/4);
+            } else
             if( state.start && mousex!=-1){
 
                     if (state.turn==0){
@@ -130,7 +147,7 @@ public class MyPanel extends Canvas {
 
                     gc.fillRoundRect(mousex-3, mousey-12, 6, 24, 3, 12);
 
-                    //g.setColor(Color.gray);
+                    
                     double aa = mousex - maxsize/2;
                     double bb = mousey - maxsize/2;
                     if (aa==0 && bb==0) return; 
@@ -141,13 +158,22 @@ public class MyPanel extends Canvas {
                     int my = mousey+(int)Math.round(bb);
                     gc.setFill(Color.PINK);		
                     gc.fillOval(mx-6,my-6, 12, 12);
-
+                    
             }
     }
 
     public void gameover(int sum){
-        System.out.println("gameover");
-    
+        this.finish = sum;
+
+        if (sum==0){
+            basicBoard.message("平局!");
+        }else if (sum>0){
+            basicBoard.message("黑棋胜");
+        } else{
+            basicBoard.message("白棋胜"); 
+        }
+
+        /* 
         try{
                 if (sum==0){
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "平局");
@@ -163,8 +189,8 @@ public class MyPanel extends Canvas {
                   }
         } catch (Exception e1) {
                  //TODO: handle exception
-       }
-}
+       }*/
+    }
 
     void setclick(ClickState clickmove) {
         this.clickmove = clickmove;

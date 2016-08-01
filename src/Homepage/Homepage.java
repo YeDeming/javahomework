@@ -243,9 +243,7 @@ public class Homepage extends Group{
                     vbip.setVisible(true);     
                     ip.setEditable(true);
                     ftvbip.play();
-                    //connect.setVisible(false);
-                    //connect.setText("连接");
-                    //connect.setVisible(true);
+                   
                 } else{
                     vbip.setVisible(false);
                 }
@@ -285,6 +283,9 @@ public class Homepage extends Group{
                     b9.setVisible(false);
                     b10.setVisible(false);
                     imageView.setVisible(false);
+                   vbip.setVisible(false);
+                   b9click = false;
+                   b10click = false;
                 }
                 b3click^=true;}
         });

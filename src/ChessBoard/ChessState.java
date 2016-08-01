@@ -22,9 +22,10 @@ public class ChessState extends SampleChessState{
     FileChooser fileChooser;
     public int kind;
    BasicBoard basicBoard;
-    public ChessState(Stage primaryStage){
+
+    public ChessState(Stage primaryStage,int kind){
             super();
-            
+            this.kind = kind;
             fileChooser = new FileChooser();
            fileChooser.getExtensionFilters().add(new ExtensionFilter("存档文件", "*.chess"));
 
@@ -75,13 +76,16 @@ public class ChessState extends SampleChessState{
             history_cnt++;
 
     }
-
+    public void canback(int backup_turn){
+        
+    }
     public void backtohistory(int backup_turn){
+        System.out.println("backto " +backup_turn);
         if (kind==0){
-             if (++backup[backup_turn]>2) return; 
-             
+             if (++backup[backup_turn]>2) return;  
         }
         int tmp = history_cnt-1;
+        if (history_turn[tmp]==backup_turn) tmp--;
         while (tmp>=0 && history_turn[tmp]!=backup_turn) tmp--;
         if (tmp<0) return;
 
@@ -144,14 +148,14 @@ public class ChessState extends SampleChessState{
             updateavaid();
 
             panel.repaint();
-
+            
             if (avaidcnt==0) pass();
 
             
             if (count==maxn || avaidcnt == 0){	
                 finish = getwinner();
 
-                basicBoard.gameover(finish);
+                panel.gameover(finish);
             }
     }
 

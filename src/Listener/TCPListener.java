@@ -9,13 +9,13 @@ import TCP.*;
 import javax.print.attribute.standard.Severity;
 
 public class TCPListener  extends FatherListener{
-    public int player_turn;
+
     public TCPServer server;
     public TCPClient client;
     int mykind;
     public Thread th;
     public TCPListener(ChessState state,int mykind,String ipString,int port,boolean xianshou){
-            super(state);
+            super(state,0);
             if (xianshou)
                 this.player_turn = 0;
             else
@@ -37,7 +37,10 @@ public class TCPListener  extends FatherListener{
             }
             th.start();
     }
-
+    public void stop(){
+        th.stop();
+    }
+    
     public void next(int rawx,int rawy) {
             // TODO Auto-generated method stub
             if (player_turn!=state.turn)
@@ -56,6 +59,25 @@ public class TCPListener  extends FatherListener{
                 server.sendmessage(x, y);
             } else{
                 client.sendmessage(x, y);
+            }
+           huiButton.setDisable(false);
+
+    }
+
+    public void huiqi() {
+
+            if (mykind==-1){
+                server.sendmessage("hui");
+            } else{
+                client.sendmessage("hui");
+            }
+    }
+
+    public void sendmessage(String string) {
+            if (mykind==-1){
+                server.sendmessage(string);
+            } else{
+                client.sendmessage(string);
             }
     }
 

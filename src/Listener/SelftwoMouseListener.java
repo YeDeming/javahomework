@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 public class SelftwoMouseListener  extends FatherListener{
 	
     public SelftwoMouseListener(ChessState state){
-            super(state);
+            super(state,0);
     }
 
     public void next(int rawx,int rawy) {
@@ -26,6 +26,8 @@ public class SelftwoMouseListener  extends FatherListener{
 
             if (state.flag[x][y]!=2) return;
             state.set(x,y);
+           huiButton.setDisable(false);
+
 
     }
 
