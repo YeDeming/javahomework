@@ -1,4 +1,4 @@
-package ChessBoard;
+package Listener;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -7,10 +7,11 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 import Ai.*;
+import ChessBoard.ChessState;
 
 public class AiListener  extends FatherListener{
     int player_turn;
-    FatherAi ai;
+    public FatherAi ai;
     Thread th;
     public AiListener(ChessState state,int player_turn,int kind){
             super(state);

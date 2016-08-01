@@ -1,4 +1,5 @@
 package Ai;
+import ChessBoard.BasicBoard;
 import ChessBoard.ChessState;
 import ChessBoard.MyPanel;
 import javafx.concurrent.Task;
@@ -6,6 +7,7 @@ import javafx.concurrent.Task;
 public abstract class FatherAi extends Task<Integer>{
     ChessState state;
     MyPanel panel;
+    BasicBoard basicBoard;
     int ai_turn;
     public FatherAi(ChessState state, int ai_turn) {
             // TODO Auto-generated constructor stub
@@ -16,6 +18,10 @@ public abstract class FatherAi extends Task<Integer>{
 
     public void setPanel(MyPanel panel) {
         this.panel = panel;
+    }
+
+    public void setBasicBoard(BasicBoard basicBoard) {
+        this.basicBoard = basicBoard;
     }
      
      //@Override
@@ -32,7 +38,8 @@ public abstract class FatherAi extends Task<Integer>{
             strategy();
          }
          System.out.println("Ai finish");
+         //basicBoard.gameover(state.finish);
+
          return state.finish;
-         //panel.gameover(state.finish);
      }
 }

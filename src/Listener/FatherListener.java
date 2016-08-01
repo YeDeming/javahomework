@@ -1,5 +1,7 @@
-package ChessBoard;
+package Listener;
 
+import ChessBoard.ChessState;
+import ChessBoard.ConstRec;
 import javafx.event.*;
 import javafx.scene.input.MouseEvent;
 
@@ -15,5 +17,5 @@ abstract public class FatherListener{
         this.state = state;
     }
     
-    abstract void next(int rawx,int rawy);
+    public abstract void next(int rawx,int rawy);
 }

@@ -1,5 +1,6 @@
-package ChessBoard;
+package Listener;
 
+import ChessBoard.ChessState;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -15,7 +16,8 @@ public class SelftwoMouseListener  extends FatherListener{
             // TODO Auto-generated method stub
             int x = (rawx-border);
             int y = (rawy-border);
-            //System.out.println(x);
+
+            if (rawx>=maxsize || rawy>=maxsize) return;
 
             //System.out.println(y);
             if (x%gridsize==0 || y%gridsize==0) return;

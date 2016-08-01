@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 package ChessBoard;
+import Listener.AiListener;
+import Listener.FatherListener;
+import Listener.SelftwoMouseListener;
 import Homepage.*;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -20,7 +23,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
+import Listener.*;
+import javafx.scene.control.Alert;
 /**
  *
  * @author meepo
@@ -37,40 +41,58 @@ public class BasicBoard extends Application {
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Drawing Operations Test");
         primaryStage.setTitle("Reversi");
-        //primaryStage.getIcons().add(new Image("/home/meepo/NetBeansProjects/BasicBoard/resource/icon.png"));
-                //BasicBoard.class.getResourceAsStream("/resource/icon.png")));   
-
-        homescreen = new Scene(new Homepage(this),600,500);
+     
+        homescreen = new Scene(new Homepage(this),600,500,Color.WHITE);
         
         primaryStage.setScene(homescreen);
-        
+        primaryStage.getIcons().add(new Image(BasicBoard.class.getResource( "/Resource/icon.png").toExternalForm()));
 
         primaryStage.show();
-
     }
+   public void gameover(int sum){
+        System.out.println("gameover");
     
-    public void setgame(int kind){
+        try{
+                if (sum==0){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "平局");
+                    alert.showAndWait();
+                }
+                else if (sum>0){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "黑棋胜");
+                    alert.showAndWait();
+                }
+                else {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "白棋胜");
+                    alert.showAndWait();
+                  }
+        } catch (Exception e1) {
+                 //TODO: handle exception
+       }
+}
+    public void setgame(int kind,String ipString,int port,boolean xianshou){
         primaryStage.hide();
         
         ChessState state = new ChessState(primaryStage);
+        state.setBasicBoard(this);
         FatherListener listener;
         if (kind==0){
             listener = new SelftwoMouseListener(state);
-        } else{
+        } else if (kind >0){
              listener  = new AiListener(state,0,kind);
+        } else if (kind==-1){
+            listener = new TCPListener(state,kind,"127.0.0.1",port,xianshou);
+        } else {
+            listener = new TCPListener(state,kind,ipString,port,false);
         }
         
         ClickState clickmove = new ClickState();
         MyPanel canvas = new MyPanel(state,listener);
         canvas.setclick(clickmove);
         state.setPanel(canvas);
-        Group root = new Group();//clickmove.circles,canvas);
-       // root.getChildren().add(new Group(canvas,clickmove.circles));
-        //StackPane root = new StackPane();
+        Group root = new Group();
+        
         root.getChildren().add(canvas);
 
-        //HBox all = new HBox();  
-        //all.getChildren().add(canvas);
         Button load = new Button("载入存档");
         load.setTranslateX(510);
         load.setTranslateY(100);        
@@ -99,7 +121,13 @@ public class BasicBoard extends Application {
         back.setMinSize(80, 30);
         back.setOnAction(new EventHandler<ActionEvent>(){
              public void handle(ActionEvent me) {
-                state.backtohistory(1-state.turn);
+                if (kind==0)
+                 state.backtohistory(1-state.turn);
+                else if (kind>0){
+                 //state.backtohistory(1.turn);
+                }else{
+                    
+                }
              }
         });
         
@@ -135,6 +163,10 @@ public class BasicBoard extends Application {
         primaryStage.show();
 
 
+    }
+
+    public void setgame(int kind) {
+        setgame(kind,"",0,false);
     }
     
 

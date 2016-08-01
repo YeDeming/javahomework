@@ -49,7 +49,6 @@ public class ClickState {
     }
     
     void play(int startx,int starty){
-        System.out.println("ChessBoard.ClickState.play()");
         circles.setVisible(true);
         Timeline timeline = new Timeline();
         int j = 0;

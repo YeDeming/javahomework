@@ -21,7 +21,7 @@ public class ChessState extends SampleChessState{
     MyPanel panel;
     FileChooser fileChooser;
     public int kind;
-   
+   BasicBoard basicBoard;
     public ChessState(Stage primaryStage){
             super();
             
@@ -36,10 +36,13 @@ public class ChessState extends SampleChessState{
             history_turn = new int [maxn*maxn];
             history_count = new int [maxn*maxn];
 
-            
-
     }
 
+    public void setBasicBoard(BasicBoard basicBoard) {
+        this.basicBoard = basicBoard;
+    }
+
+    
     public void setKind(int kind) {
         this.kind = kind;
     }
@@ -100,6 +103,7 @@ public class ChessState extends SampleChessState{
 
     public void set(int i,int j){
             if (!start) return;
+            if (finish !=-2) return;
             int tmp = (i<<3) |j;
             boolean candrop = false;
             for (int k = 0 ; k < avaidcnt; ++ k)
@@ -144,10 +148,10 @@ public class ChessState extends SampleChessState{
             if (avaidcnt==0) pass();
 
             
-            if (count==maxn*maxn || avaidcnt == 0){	
+            if (count==maxn || avaidcnt == 0){	
                 finish = getwinner();
 
-                panel.gameover(finish);
+                basicBoard.gameover(finish);
             }
     }
 

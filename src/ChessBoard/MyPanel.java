@@ -1,5 +1,6 @@
 package ChessBoard;
 
+import Listener.FatherListener;
 import javafx.scene.canvas.*;
 import javafx.scene.input.MouseEvent;
 
@@ -10,6 +11,7 @@ import javafx.event.*;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import Listener.*;
 
 public class MyPanel extends Canvas {
     final static int border = ConstRec.border;
@@ -39,7 +41,7 @@ public class MyPanel extends Canvas {
                         mousex = (int) Math.round(me.getX());
                         mousey = (int) Math.round(me.getY());
                         if (mousex>=maxsize){
-                            gamescene.setCursor(Cursor.CLOSED_HAND);
+                            gamescene.setCursor(Cursor.DEFAULT);
                             repaint();
                         } else{
                             gamescene.setCursor(Cursor.DISAPPEAR);
@@ -145,10 +147,7 @@ public class MyPanel extends Canvas {
 
     public void gameover(int sum){
         System.out.println("gameover");
-        //AlertThread a= new AlertThread();
-        //a.sum = sum;
-        //a.start();
-        
+    
         try{
                 if (sum==0){
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "平局");
