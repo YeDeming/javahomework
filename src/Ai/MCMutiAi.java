@@ -99,5 +99,11 @@ public class MCMutiAi extends FatherAi {
                 }
                 return maxV;
         }
+
+    public void stop() {
+        for (int i =  0; i < threads.size(); ++ i){
+            threads.get(i).th.stop();
+        }
+    }
         
 }

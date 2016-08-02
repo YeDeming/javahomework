@@ -28,6 +28,8 @@ import Listener.*;
 
 import java.awt.Panel;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
@@ -44,8 +46,9 @@ public class BasicBoard extends Application {
      FatherListener listener;
 
      Button yesButton,noButton,sureButton,load,save,back,backhome;
-     Label messLabel,huiLabel = new Label("对方请求悔棋，是否同意？");
+     Label messLabel,huiLabel = new Label();
      public MyPanel canvas;
+     int messagekind;
     public static void main(String[] args) {
         launch(args);
     }
@@ -93,7 +96,12 @@ public class BasicBoard extends Application {
         
         primaryStage.setScene(homescreen);
         primaryStage.getIcons().add(new Image(BasicBoard.class.getResource( "/Resource/icon.png").toExternalForm()));
-
+        primaryStage.widthProperty().addListener(new ChangeListener<Number>() {  
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                   System.out.println("Window Size Change:" + oldValue.toString() + "," + newValue.toString());  
+            }
+         });          
         primaryStage.show();
     }
     
@@ -116,12 +124,13 @@ public class BasicBoard extends Application {
             }
         });
     }   
-       public void message_hui(){
+       public void message_hui(String LabelString){
              Platform.runLater(new  Runnable() {
             @Override
             public void run() {
                 gamescreen.setCursor(Cursor.DEFAULT);
                 canvas.dark = true;
+                huiLabel.setText(LabelString);
                 huiLabel.setVisible(true);
                 yesButton.setVisible(true);
                 noButton.setVisible(true);
@@ -151,20 +160,19 @@ public class BasicBoard extends Application {
    
     public void setgame(int kind,String ipString,int port,boolean xianshou){
         primaryStage.hide();
-        
+        Clock clock = new Clock(Color.RED, Color.DARKGREEN);
+
         ChessState state = new ChessState(primaryStage,kind);
         state.setBasicBoard(this);
         if (kind==0){
-            listener = new SelftwoMouseListener(state);
+            listener = new SelftwoMouseListener(state,clock);
         } else if (kind >0){
-            
              listener  = new AiListener(state,0,kind,this);
-
         } else if (kind==-1){
-            listener = new TCPListener(state,kind,"127.0.0.1",port,xianshou);
+            listener = new TCPListener(state,kind,"127.0.0.1",port,xianshou,clock);
             ((TCPListener)listener).server.setBasicBoard(this);
         } else {
-            listener = new TCPListener(state,kind,ipString,port,false);
+            listener = new TCPListener(state,kind,ipString,port,false,clock);
             ((TCPListener)listener).client.setBasicBoard(this);
         }
 
@@ -200,13 +208,16 @@ public class BasicBoard extends Application {
             save.setDisable(true);
         }
         back = new Button("悔棋");
-                back.setDisable(true);
+        back.setDisable(true);
 
         back.setMinSize(80, 30);
         back.setOnAction(new EventHandler<ActionEvent>(){
              public void handle(ActionEvent me) {
-                if (kind==0)
+                 messagekind = 1;
+                if (kind==0){
                  state.backtohistory(1-state.turn);
+                  clock.restart();
+                }
                 else if (kind>0){
                  state.backtohistory(listener.player_turn);
                 }else{
@@ -219,13 +230,18 @@ public class BasicBoard extends Application {
         backhome.setMinSize(80, 30);
         backhome.setOnAction(new EventHandler<ActionEvent>(){
              public void handle(ActionEvent me) {
-                 if (state.kind>0){
-                     ((AiListener)listener).stop();
-                 } else if (state.kind<0){
-                     ((TCPListener)listener).stop();
+                 if (state.start && state.finish==-2) {
+                     messagekind = 0;
+                     message_hui("是否要放弃当前游戏?");
                  }
-                 primaryStage.setScene(homescreen);
-                 
+                 else{
+                    if (state.kind>0){
+                         ((AiListener)listener).stop();
+                    } else if (state.kind<0){
+                         ((TCPListener)listener).stop();
+                    }
+                    primaryStage.setScene(homescreen);
+                 }
              }
         });
         
@@ -245,29 +261,31 @@ public class BasicBoard extends Application {
         
         noButton.setOnAction(new EventHandler<ActionEvent>(){
              public void handle(ActionEvent me) {                 
-                    //Platform.runLater(new  Runnable() {
-                      //   @Override
-                         //public void run() {
-                                quxiao();
-                                canvas.repaint();
-                                ((TCPListener)listener).sendmessage("nohui");
+                            quxiao();
+                            if (messagekind==1){
+                             canvas.repaint();
+                             ((TCPListener)listener).sendmessage("nohui");
+                            }
                         }
-                    //});
-            // }
         });
         
         yesButton.setOnAction(new EventHandler<ActionEvent>(){
             
-             public void handle(ActionEvent me) {
-                 
-                    /*Platform.runLater(new  Runnable() {
-                         @Override
-                         public void run() {*/
+             public void handle(ActionEvent me) {       
+                 if (messagekind==1){
                         quxiao();
                         state.backtohistory(listener.player_turn^1);         
                         ((TCPListener)listener).sendmessage("yeshui");
-                  //}
-                   // });
+                 } else if (messagekind == 0){
+                        if (state.kind>0)
+                           ((AiListener)listener).stop();
+                       else if (state.kind<0){ 
+                           ((TCPListener)listener).stop();
+                       }
+                       quxiao();
+                       primaryStage.setScene(homescreen);
+                 
+                 }
              }
         });
         
@@ -276,21 +294,23 @@ public class BasicBoard extends Application {
         root.getChildren().addAll(vb,sureButton,yesButton,noButton,messLabel,huiLabel);
         gamescreen = new Scene(root);
         canvas.setscreen(gamescreen);
-        Clock clock = new Clock(Color.RED, Color.DARKGREEN);
+        
         clock.setLayoutX(maxsize+border);
         clock.setLayoutY(maxsize/8);
         clock.getTransforms().add(new Scale(0.25f, 0.25f, 0, 0));
+        if (kind>0) clock.setVisible(false);
+        else clock.setVisible(true);
         
         if (kind<0) {
-            clock.setVisible(true);
-            clock.setListener((TCPListener)listener);
-            ((TCPListener)listener).setclock(clock);
+            save.setVisible(false);
+            load.setVisible(false);
+        } else{
+            save.setVisible(true);
+            load.setVisible(true);
         }
-        else clock.setVisible(false);
         root.getChildren().add(clock);
         root.getChildren().add(clickmove.circles);
-        
-
+       
         
         gamescreen.setCursor(Cursor.NONE);
         primaryStage.setScene(gamescreen);
@@ -298,9 +318,10 @@ public class BasicBoard extends Application {
              ((AiListener)listener).ai.setPanel(canvas);
             ((AiListener)listener).start();
         }
-        state.restart();
+        if (kind!=-1)
+            state.restart();
+        if (kind == 0) clock.restart();
         primaryStage.show();
-
 
     }
 
@@ -309,25 +330,18 @@ public class BasicBoard extends Application {
     }
 
     public void protect() {
-    //   Platform.runLater(new  Runnable() {
-      //      @Override
-         //   public void run() {
-
+        
          load.setDisable(true);
         save.setDisable(true);
         back.setDisable(true);
-  //                  }
-    //  });
+        
     }
     public void deprotect() {
-      // Platform.runLater(new  Runnable() {
-         //   @Override
-            //public void run() {
+        
         load.setDisable(false);
         save.setDisable(false);
         back.setDisable(false);
-             //       }
-    //    });
+        
     }
 
     

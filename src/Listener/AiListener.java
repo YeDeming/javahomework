@@ -13,10 +13,11 @@ import ChessBoard.ChessState;
 public class AiListener  extends FatherListener{
 
     public FatherAi ai;
+    int kind;
     Thread th;
     public AiListener(ChessState state,int player_turn,int kind, BasicBoard basicBoard){
             super(state,player_turn);
-
+            this.kind = kind;
             if (kind==1){
                 ai = new RandomAi(state,player_turn^1,basicBoard);
                 System.out.println("RandomAi selected");
@@ -37,6 +38,9 @@ public class AiListener  extends FatherListener{
         //ai.start();
     }
     public void stop(){
+        if (kind==3){
+            ((MCMutiAi)ai).stop();
+        }
         th.stop();
     }
     public void next(int rawx, int rawy) {

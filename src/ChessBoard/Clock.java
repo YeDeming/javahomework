@@ -57,7 +57,7 @@ import javafx.util.Duration;
             getChildren().add(dots);
             // update digits to current time and start timer to update every second
             setcurrent();
-            play();
+            //play();
         }
         public void setcurrent(){
             currentsecond = ConstRec.limitsecond;
@@ -95,7 +95,11 @@ import javafx.util.Duration;
             secondTimeline.play();
         }
 
-        
+        public void restart(){
+           stop();
+           setcurrent();
+           play();
+        }
 
         public void stop(){
             //delayTimeline.stop();

@@ -16,8 +16,9 @@ public class TCPListener  extends FatherListener{
     int mykind;
     public Thread th;
     Clock clock;
-    public TCPListener(ChessState state,int mykind,String ipString,int port,boolean xianshou){
+    public TCPListener(ChessState state,int mykind,String ipString,int port,boolean xianshou,Clock clock){
             super(state,0);
+            this.clock = clock;
             if (xianshou)
                 this.player_turn = 0;
             else
@@ -26,11 +27,11 @@ public class TCPListener  extends FatherListener{
             this.mykind = mykind;
             try{
                 if (mykind == -1){
-                    server = new TCPServer(state,port,xianshou);
+                    server = new TCPServer(state,port,xianshou,clock);
                     th = new Thread(server);
                     th.setDaemon(true);
                 } else {
-                    client = new TCPClient(state,ipString,port,this);    
+                    client = new TCPClient(state,ipString,port,this,clock);    
                     th = new Thread(client);
                     th.setDaemon(true);
                 }
@@ -45,6 +46,7 @@ public class TCPListener  extends FatherListener{
     
     public void next(int rawx,int rawy) {
             // TODO Auto-generated method stub
+
             if (player_turn!=state.turn)
                 return;
             int x = (rawx-border);
@@ -58,11 +60,12 @@ public class TCPListener  extends FatherListener{
             if (state.flag[x][y]!=2) return;
             state.set(x,y);
             if (mykind==-1){
-                server.sendmessage(x, y);
+                server.unit.sendmessage(x, y);
             } else{
-                client.sendmessage(x, y);
+                client.unit.sendmessage(x, y);
             }
            huiButton.setDisable(false);
+           clock.stop();
            clock.setcurrent();
 
     }
@@ -70,28 +73,34 @@ public class TCPListener  extends FatherListener{
     public void huiqi() {
 
             if (mykind==-1){
-                server.sendmessage("hui");
+                server.unit.sendmessage("hui");
             } else{
-                client.sendmessage("hui");
+                client.unit.sendmessage("hui");
             }
     }
 
     public void sendmessage(String string) {
             if (mykind==-1){
-                server.sendmessage(string);
+                server.unit.sendmessage(string);
+                if (string.equals("yeshui"))
+                    server.unit.checkclock();
+            
             } else{
-                client.sendmessage(string);
+                client.unit.sendmessage(string);
+                if (string.equals("yeshui"))
+                    client.unit.checkclock();
             }
     }
 
-    public void setclock(Clock clock) {
+    /*public void setclock(Clock clock) {
         this.clock = clock;
              if (mykind==-1){
                 server.setClock(clock);
             } else{
+                 System.out.println("client set clock");
                 client.setClock(clock);
             }
-    }
+    }*/
 
  
 }

@@ -41,10 +41,11 @@ public class MyPanel extends Canvas {
             
             setOnMouseMoved(new EventHandler<MouseEvent>(){
                     public void handle(MouseEvent me) {
+
                         if (dark) return;
                         mousex = (int) Math.round(me.getX());
                         mousey = (int) Math.round(me.getY());
-                        if (mousex>=maxsize){
+                        if (mousex>=maxsize || state.start==false){
                             gamescene.setCursor(Cursor.DEFAULT);
                             repaint();
                         } else{
@@ -56,7 +57,7 @@ public class MyPanel extends Canvas {
             
             setOnMouseClicked(new EventHandler<MouseEvent>(){
                     public void handle(MouseEvent me) {
-                        if (finish!=-2) return;
+                        if (finish!=-2 || state.start==false) return;
 
                         int xx = (int) Math.round(me.getX());
                         int yy = (int) Math.round(me.getY());

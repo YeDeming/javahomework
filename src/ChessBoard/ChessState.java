@@ -67,6 +67,7 @@ public class ChessState extends SampleChessState{
             updateavaid();
 
             panel.repaint();
+
     }
 
     public void savehistory(){

@@ -68,15 +68,12 @@ public class MCThread extends  Task<Integer>{
 
 
                     if (i < currentnode.avaidcnt){
-
-
-                                            data.pool[tot] = new Node(currentnode);
-                                            data.pool[tot].setfa(v);
-                                            data.pool[tot].set(x);
-                                            wait = currentnode;
-                                            waitset = x;
-                                            //currentnode.son[x] = tot;
-                                            return tot;
+                        data.pool[tot] = new Node(currentnode);
+                        data.pool[tot].setfa(v);
+                        data.pool[tot].set(x);
+                        wait = currentnode;
+                        waitset = x;
+                        return tot;
 
                     }
                     else {

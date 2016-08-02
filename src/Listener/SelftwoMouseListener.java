@@ -1,15 +1,17 @@
 package Listener;
 
 import ChessBoard.ChessState;
+import ChessBoard.Clock;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JOptionPane;
 
 public class SelftwoMouseListener  extends FatherListener{
-	
-    public SelftwoMouseListener(ChessState state){
+    Clock clock;
+    public SelftwoMouseListener(ChessState state,Clock clock){
             super(state,0);
+            this.clock = clock;
     }
 
     public void next(int rawx,int rawy) {
@@ -27,7 +29,7 @@ public class SelftwoMouseListener  extends FatherListener{
             if (state.flag[x][y]!=2) return;
             state.set(x,y);
            huiButton.setDisable(false);
-
+           clock.restart();
 
     }
 

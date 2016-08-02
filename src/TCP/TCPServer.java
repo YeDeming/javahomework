@@ -24,10 +24,12 @@ public class TCPServer extends Task<Integer>{
     TCPListener listener;
     BasicBoard basicBoard;
     Clock clock;
-    public TCPServer(ChessState state,int port,boolean xianshou) throws Exception{
+    public TCPUnit unit;
+
+    public TCPServer(ChessState state,int port,boolean xianshou,Clock clock) throws Exception{
         this.state = state;
         this.port =port;
-        
+        this.clock = clock;
         if (xianshou) myturn = 0;
         else myturn = 1;
     }        
@@ -49,44 +51,18 @@ public class TCPServer extends Task<Integer>{
         brInFromeClinet = new BufferedReader(new InputStreamReader(socketServer.getInputStream()));
         dosOutToClient = new DataOutputStream(socketServer.getOutputStream());
         System.out.println("connected!");
+        state.restart();
 
         dosOutToClient.writeBytes(myturn + "\n");
-
-        while (state.finish==-2){
+        unit = new TCPUnit(brInFromeClinet,dosOutToClient,state,myturn,basicBoard,clock);
+        unit.work();
+         /*while (state.finish==-2){
                 strSocket = brInFromeClinet.readLine();
-                System.out.println("Server receive: " + strSocket);
-
-                if (state.finish!=-2) break;
-                if (strSocket==null) continue;
-                String[] args = strSocket.split(" ");
-                if (args[0].equals("set"))
-                    state.set(Integer.valueOf(args[1]),Integer.valueOf(args[2]));
-                else if (args[0].equals("hui")){
-                    basicBoard.message_hui();
-                } else if (args[0].equals("nohui")){
-                    basicBoard.quxiao();
-                } else if (args[0].equals("yeshui")){
-                    basicBoard.quxiao();
-                    state.backtohistory(myturn);
-                }
-                
-        }
+                System.out.println("Receive: " + strSocket);
+         }*/
+        socketServer.close();
         return 0;
     }
     
-    public void sendmessage(int x,int y) {
-            String string = "set " + x + " " + y + "\n";
-            try{
-                    dosOutToClient.writeBytes(string);
-            }catch (Exception e){
-            }
-    }
 
-    public void sendmessage(String str) {
-        String string = str+ "\n";
-            try{
-                    dosOutToClient.writeBytes(string);
-            }catch (Exception e){
-            }
-    }
 } 
