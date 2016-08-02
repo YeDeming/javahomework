@@ -23,6 +23,7 @@ public class TCPServer extends Task<Integer>{
     boolean xianshou;
     TCPListener listener;
     BasicBoard basicBoard;
+    Clock clock;
     public TCPServer(ChessState state,int port,boolean xianshou) throws Exception{
         this.state = state;
         this.port =port;
@@ -31,6 +32,10 @@ public class TCPServer extends Task<Integer>{
         else myturn = 1;
     }        
 
+    public void setClock(Clock clock) {
+        this.clock = clock;
+    }
+    
     public void setBasicBoard(BasicBoard basicBoard) {
         this.basicBoard = basicBoard;
     }

@@ -1,6 +1,7 @@
 package Listener;
 
 import ChessBoard.ChessState;
+import ChessBoard.Clock;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -14,6 +15,7 @@ public class TCPListener  extends FatherListener{
     public TCPClient client;
     int mykind;
     public Thread th;
+    Clock clock;
     public TCPListener(ChessState state,int mykind,String ipString,int port,boolean xianshou){
             super(state,0);
             if (xianshou)
@@ -61,6 +63,7 @@ public class TCPListener  extends FatherListener{
                 client.sendmessage(x, y);
             }
            huiButton.setDisable(false);
+           clock.setcurrent();
 
     }
 
@@ -78,6 +81,15 @@ public class TCPListener  extends FatherListener{
                 server.sendmessage(string);
             } else{
                 client.sendmessage(string);
+            }
+    }
+
+    public void setclock(Clock clock) {
+        this.clock = clock;
+             if (mykind==-1){
+                server.setClock(clock);
+            } else{
+                client.setClock(clock);
             }
     }
 

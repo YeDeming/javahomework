@@ -1,5 +1,6 @@
 package Ai;
 
+import ChessBoard.BasicBoard;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -20,8 +21,8 @@ public class MCAi extends FatherAi {
 
         int root,tot;
         long begin_time;
-        public MCAi(ChessState state, int ai_turn) {
-                super(state,ai_turn);
+        public MCAi(ChessState state, int ai_turn,BasicBoard basicBoard) {
+                super(state,ai_turn,basicBoard);
                 // TODO Auto-generated constructor stub
                 random = new Random();
                 for (int i = 1; i < maxstep; ++i) {

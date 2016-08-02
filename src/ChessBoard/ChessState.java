@@ -1,5 +1,6 @@
 package ChessBoard;
 
+import Listener.AiListener;
 import java.awt.FileDialog;
 import java.io.File;
 import java.util.*;
@@ -76,9 +77,17 @@ public class ChessState extends SampleChessState{
             history_cnt++;
 
     }
-    public void canback(int backup_turn){
-        
+    public boolean canback(int backup_turn){
+        if (kind==0){
+             if (backup[backup_turn]>2) return false;  
+        }
+         int tmp = history_cnt-1;
+        if (history_turn[tmp]==backup_turn) tmp--;
+        while (tmp>=0 && history_turn[tmp]!=backup_turn) tmp--;
+        if (tmp<0) return false;
+        return true;
     }
+    
     public void backtohistory(int backup_turn){
         System.out.println("backto " +backup_turn);
         if (kind==0){
@@ -99,6 +108,12 @@ public class ChessState extends SampleChessState{
 
         updateavaid();
         panel.repaint();
+        if (kind==0 && !canback(turn)){
+            basicBoard.back.setDisable(true);
+        } else 
+            if ( !canback(basicBoard.listener.player_turn)){
+                basicBoard.back.setDisable(true);
+            }
     }
 
     public void setPanel(MyPanel panel) {
@@ -152,7 +167,7 @@ public class ChessState extends SampleChessState{
             if (avaidcnt==0) pass();
 
             
-            if (count==maxn || avaidcnt == 0){	
+            if (count==maxn+2 || avaidcnt == 0){	
                 finish = getwinner();
 
                 panel.gameover(finish);

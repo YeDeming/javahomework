@@ -9,13 +9,16 @@ public abstract class FatherAi extends Task<Integer>{
     MyPanel panel;
     BasicBoard basicBoard;
     int ai_turn;
-    public FatherAi(ChessState state, int ai_turn) {
+    public FatherAi(ChessState state, int ai_turn,BasicBoard basicBoard) {
             // TODO Auto-generated constructor stub
             this.state = state;
             this.ai_turn = ai_turn;
+            this.basicBoard = basicBoard;
     }
      public abstract void strategy();
-
+     
+     
+     
     public void setPanel(MyPanel panel) {
         this.panel = panel;
     }
@@ -24,8 +27,6 @@ public abstract class FatherAi extends Task<Integer>{
         this.basicBoard = basicBoard;
     }
      
-     //@Override
-     //public void run(){
     @Override 
      protected Integer call() throws Exception {
          while (state.finish == -2){
@@ -35,10 +36,13 @@ public abstract class FatherAi extends Task<Integer>{
                 }catch (Exception e){
                 }
             }
+                     basicBoard.protect();
+                     
             strategy();
+                     basicBoard.deprotect();
+
          }
          System.out.println("Ai finish");
-         //basicBoard.gameover(state.finish);
 
          return state.finish;
      }

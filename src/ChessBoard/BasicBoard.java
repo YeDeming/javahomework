@@ -31,6 +31,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
+import javafx.scene.transform.Scale;
 /**
  *
  * @author meepo
@@ -156,7 +157,9 @@ public class BasicBoard extends Application {
         if (kind==0){
             listener = new SelftwoMouseListener(state);
         } else if (kind >0){
-             listener  = new AiListener(state,0,kind);
+            
+             listener  = new AiListener(state,0,kind,this);
+
         } else if (kind==-1){
             listener = new TCPListener(state,kind,"127.0.0.1",port,xianshou);
             ((TCPListener)listener).server.setBasicBoard(this);
@@ -273,8 +276,22 @@ public class BasicBoard extends Application {
         root.getChildren().addAll(vb,sureButton,yesButton,noButton,messLabel,huiLabel);
         gamescreen = new Scene(root);
         canvas.setscreen(gamescreen);
+        Clock clock = new Clock(Color.RED, Color.DARKGREEN);
+        clock.setLayoutX(maxsize+border);
+        clock.setLayoutY(maxsize/8);
+        clock.getTransforms().add(new Scale(0.25f, 0.25f, 0, 0));
+        
+        if (kind<0) {
+            clock.setVisible(true);
+            clock.setListener((TCPListener)listener);
+            ((TCPListener)listener).setclock(clock);
+        }
+        else clock.setVisible(false);
+        root.getChildren().add(clock);
         root.getChildren().add(clickmove.circles);
+        
 
+        
         gamescreen.setCursor(Cursor.NONE);
         primaryStage.setScene(gamescreen);
         if (kind>0){
@@ -289,6 +306,28 @@ public class BasicBoard extends Application {
 
     public void setgame(int kind) {
         setgame(kind,"",0,false);
+    }
+
+    public void protect() {
+    //   Platform.runLater(new  Runnable() {
+      //      @Override
+         //   public void run() {
+
+         load.setDisable(true);
+        save.setDisable(true);
+        back.setDisable(true);
+  //                  }
+    //  });
+    }
+    public void deprotect() {
+      // Platform.runLater(new  Runnable() {
+         //   @Override
+            //public void run() {
+        load.setDisable(false);
+        save.setDisable(false);
+        back.setDisable(false);
+             //       }
+    //    });
     }
 
     

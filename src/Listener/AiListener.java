@@ -7,24 +7,25 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 import Ai.*;
+import ChessBoard.BasicBoard;
 import ChessBoard.ChessState;
 
 public class AiListener  extends FatherListener{
 
     public FatherAi ai;
     Thread th;
-    public AiListener(ChessState state,int player_turn,int kind){
+    public AiListener(ChessState state,int player_turn,int kind, BasicBoard basicBoard){
             super(state,player_turn);
 
             if (kind==1){
-                ai = new RandomAi(state,player_turn^1);
+                ai = new RandomAi(state,player_turn^1,basicBoard);
                 System.out.println("RandomAi selected");
             }
             else if (kind == 2){
-                ai = new MCAi(state,player_turn^1);
+                ai = new MCAi(state,player_turn^1,basicBoard);
                 System.out.println("MCAi selected");
             } else{
-                ai = new MCMutiAi(state,player_turn^1);
+                ai = new MCMutiAi(state,player_turn^1,basicBoard);
                 System.out.println("MCMutiAi selected");
             }
             th = new Thread(ai);

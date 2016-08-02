@@ -25,7 +25,8 @@ public class TCPClient extends Task<Integer>{
     int port;
     TCPListener listener;
     BasicBoard basicBoard;
-    
+    Clock clock;
+
     public TCPClient(ChessState state,String ip,int port,TCPListener listener) throws Exception{
         this.state = state;
         this.ip = ip;
@@ -33,6 +34,10 @@ public class TCPClient extends Task<Integer>{
         this.listener = listener;
     }        
 
+    public void setClock(Clock clock) {
+        this.clock = clock;
+    }
+    
     public void setBasicBoard(BasicBoard basicBoard) {
         this.basicBoard = basicBoard;
     }

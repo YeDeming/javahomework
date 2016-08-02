@@ -1,5 +1,6 @@
 package Ai;
 
+import ChessBoard.BasicBoard;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -25,8 +26,8 @@ public class MCMutiAi extends FatherAi {
 
         boolean working = false;
 
-        public MCMutiAi(ChessState state,int ai_turn) {
-                super(state,ai_turn);
+        public MCMutiAi(ChessState state,int ai_turn,BasicBoard basicBoard) {
+                super(state,ai_turn,basicBoard);
                 // TODO Auto-generated constructor stub
                 random = new Random();
                 for (int i = 1; i < maxstep_thread; ++i) {

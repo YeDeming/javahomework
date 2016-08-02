@@ -1,13 +1,14 @@
 package Ai;
+import ChessBoard.BasicBoard;
 import java.util.Random;
 
 import ChessBoard.ChessState;
 
 public class RandomAi extends FatherAi{
     Random random;
-    public RandomAi(ChessState state,int ai_turn) {
+    public RandomAi(ChessState state,int ai_turn,BasicBoard basicBoard) {
             // TODO Auto-generated constructor stub
-            super(state,ai_turn);
+            super(state,ai_turn,basicBoard);
             random = new Random();
     }
     @Override
