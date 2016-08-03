@@ -25,7 +25,8 @@ public class TCPServer extends Task<Integer>{
     BasicBoard basicBoard;
     Clock clock;
     public TCPUnit unit;
-
+    Socket socketServer ;
+    ServerSocket ssocket ;
     public TCPServer(ChessState state,int port,boolean xianshou,Clock clock) throws Exception{
         this.state = state;
         this.port =port;
@@ -46,14 +47,16 @@ public class TCPServer extends Task<Integer>{
     protected Integer call() throws Exception {
         System.out.println(port);
         System.out.println("Server Start");
-        ServerSocket ssocket = new ServerSocket(port);
-        Socket socketServer = ssocket.accept();
+        ssocket = new ServerSocket(port);
+        socketServer = ssocket.accept();
         brInFromeClinet = new BufferedReader(new InputStreamReader(socketServer.getInputStream()));
         dosOutToClient = new DataOutputStream(socketServer.getOutputStream());
         System.out.println("connected!");
-        state.restart();
+        //state.restart();
 
         dosOutToClient.writeBytes(myturn + "\n");
+        dosOutToClient.writeBytes(ConstRec.limitsecond + "\n");
+
         unit = new TCPUnit(brInFromeClinet,dosOutToClient,state,myturn,basicBoard,clock);
         unit.work();
          /*while (state.finish==-2){
@@ -64,5 +67,10 @@ public class TCPServer extends Task<Integer>{
         return 0;
     }
     
-
+    public void stop() throws IOException{
+        if (ssocket!=null)
+            ssocket.close();
+        if (socketServer!=null)
+                socketServer.close();
+    }
 } 

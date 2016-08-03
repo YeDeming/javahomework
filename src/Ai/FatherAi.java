@@ -2,7 +2,9 @@ package Ai;
 import ChessBoard.BasicBoard;
 import ChessBoard.ChessState;
 import ChessBoard.MyPanel;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.scene.Cursor;
 
 public abstract class FatherAi extends Task<Integer>{
     ChessState state;
@@ -32,15 +34,15 @@ public abstract class FatherAi extends Task<Integer>{
          while (state.finish == -2){
             while (ai_turn!=state.turn){
                 try{
-                    Thread.sleep(50);
+                    Thread.sleep(100);
                 }catch (Exception e){
                 }
-            }
-                     basicBoard.protect();
-                     
-            strategy();
-                     basicBoard.deprotect();
+            }      
 
+             basicBoard.protect();
+                     
+              strategy();
+              basicBoard.deprotect();
          }
          System.out.println("Ai finish");
 

@@ -40,6 +40,7 @@ public class ClickState {
             circle.setStroke(Color.web("white", 0.16));
             circle.setStrokeWidth(4);
             circles.getChildren().add(circle);
+            
             //rec_circle.add(circle);
         }
 
@@ -47,10 +48,10 @@ public class ClickState {
         circles.setVisible(false);
  
     }
+    
+    /*
     public void resetsize(){
-        /*for (int i = 0; i < n; ++i){
-            rec_circle.get(i).
-        }*/
+
         circles = new Group();
         for (int i = 0; i < n; i++) {
             Circle circle = new Circle(ConstRec.gridsize/2, Color.web("white", 0.05));
@@ -59,11 +60,13 @@ public class ClickState {
             circle.setStrokeWidth(4);
             circles.getChildren().add(circle);
             //rec_circle.add(circle);
-        }
+        }   
+
 
         circles.setEffect(new BoxBlur(10, 10, 3));
         circles.setVisible(false);
     }
+*/
     void play(int startx,int starty){
         circles.setVisible(true);
         Timeline timeline = new Timeline();

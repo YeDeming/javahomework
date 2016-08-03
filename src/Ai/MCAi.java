@@ -13,7 +13,7 @@ import ChessBoard.ConstRec;
 public class MCAi extends FatherAi {
         Random random;
         final static int maxstep = ConstRec.maxstep;
-        final static int limit_time = (int) (5000*0.9);
+        final static int limit_time = (int) (ConstRec.limitsecond*900);
         final static double c = 1.414;
         double sqrtArray[] = new double[maxstep];
         double inv[] = new double[maxstep];

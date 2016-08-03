@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package ChessBoard;
-import static ChessBoard.MyPanel.maxsize;
+
 import Listener.AiListener;
 import Listener.FatherListener;
 import Listener.SelftwoMouseListener;
@@ -25,6 +25,7 @@ import javafx.scene.shape.ArcType;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import Listener.*;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
 import java.awt.Panel;
 import javafx.application.Platform;
@@ -55,9 +56,12 @@ public class BasicBoard extends Application {
      Label messLabel,huiLabel = new Label();
      public MyPanel canvas;
      public int messagekind;
-     VBox vb,liaotianBox;
+     VBox vb;//,liaotianBox;
      Homepage homepage;
      Clock clock;
+     boolean bt1,bt2,bt3;
+     boolean firstset = true;
+     public int surekind;
     public static void main(String[] args) {
         launch(args);
     }
@@ -75,12 +79,15 @@ public class BasicBoard extends Application {
         yesButton.setVisible(false);
         noButton.setVisible(false);
     }
+    public void addreceiveField(String string){
+        receiveField.setText(receiveField.getText()+string+'\n');
+    }
     public void resetsize(){
         int maxsizex = ConstRec.maxsizex;
 
         int maxsizey = ConstRec.maxsizey;
 
-        messLabel.setFont(new Font("Tahoma",30));
+        messLabel.setFont(new Font("Tahoma",15));
         huiLabel.setFont(new Font("Tahoma",15));
         sureButton.setLayoutX(maxsizex/2+border-maxsizex/8);
         sureButton.setLayoutY(maxsizey/3+border+maxsizey/4-maxsizey/15);
@@ -94,7 +101,7 @@ public class BasicBoard extends Application {
         yesButton.setLayoutX(maxsizex/2+border-maxsizex/6);
         yesButton.setLayoutY(maxsizey/3+border+maxsizey/4-maxsizey/15);
         yesButton.setMinSize(maxsizex/8, maxsizey/25);
-        noButton.setLayoutX(maxsizex/2+border+maxsizex/6-maxsizex/8);
+        noButton.setLayoutX(maxsizex/2+border+ maxsizex/8);
         noButton.setLayoutY(maxsizey/3+border+maxsizey/4-maxsizey/15);
         noButton.setMinSize(maxsizex/8, maxsizey/25);
         load.setMinSize(maxsizex/6.25,maxsizey/16.67);
@@ -106,11 +113,14 @@ public class BasicBoard extends Application {
         vb.setLayoutY(ConstRec.maxsizey/5);
         vb.setSpacing(maxsizey/100);
         
-        liaotianBox.setLayoutX(maxsize);
-        liaotianBox.setLayoutY(maxsize*3/5);
-        sendField.setMaxWidth(maxsize/10*3);
-        receiveField.setMaxWidth(maxsize/5*2-5);
-        receiveField.setMaxHeight(maxsize*3/10);
+        //liaotianBox.setLayoutX(maxsize);
+        //liaotianBox.setLayoutY(maxsize*3/5)*
+        sendField.setMaxWidth(maxsizex*7/5-(maxsizex+ConstRec.border)-border*5);
+        receiveField.setMaxWidth(maxsizex*7/5-(maxsizex+ConstRec.border*3));
+        receiveField.setMaxHeight(maxsizex*4/10);
+        clock.setLayoutX(maxsizex+ConstRec.border*2);
+        clock.setLayoutY(maxsize/8);
+
     }
     
     @Override
@@ -119,26 +129,41 @@ public class BasicBoard extends Application {
         primaryStage.setTitle("Reversi");
      
         homepage = new Homepage(this);
-        homescreen = new Scene(homepage,ConstRec.maxsizex*7/5,ConstRec.maxsizey,Color.WHITE);
-        
+        StackPane home = new StackPane(homepage);
+        //System.out.println(primaryStage.getHeight()+" "+primaryStage.getWidth());
+ //imageView.setPreserveRatio(true);
+        //imageView.fitHeightProperty(
+        home.setPrefHeight(ConstRec.maxsizey);
+        home.setPrefWidth(ConstRec.maxsizex*7/5);
+        homescreen = new Scene(home,Color.WHITE);
+
         primaryStage.setScene(homescreen);
         primaryStage.getIcons().add(new Image(BasicBoard.class.getResource( "/Resource/icon.png").toExternalForm()));
- 
-        homescreen.widthProperty().addListener(new ChangeListener<Number>() {  
+        //oldwidth = homescreen.getWidth();
+        //                    System.out.println(oldwidth);
+        
+        primaryStage.widthProperty().addListener(new ChangeListener<Number>() {  
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-
-                    ConstRec.maxsizex = newValue.intValue()*5/6;
+                    if (newValue.intValue()==0) return;
+                   ConstRec.maxsizex = newValue.intValue()*5/7;
+                   ConstRec.update();
                    homepage.resetsize();
+                   home.setPrefHeight(ConstRec.maxsizey);
+                    home.setPrefWidth(ConstRec.maxsizex*7/5);
+                   //homescreen.
             }
          });
         
-         homescreen.heightProperty().addListener(new ChangeListener<Number>() {  
+         primaryStage.heightProperty().addListener(new ChangeListener<Number>() {  
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    ConstRec.maxsizey = newValue.intValue();
+                   if (newValue.intValue()==0) return;
+                   ConstRec.maxsizey = (int)(newValue.intValue()-28);
+                   ConstRec.update();
                    homepage.resetsize();
-
+        home.setPrefHeight(ConstRec.maxsizey);
+        home.setPrefWidth(ConstRec.maxsizex*7/5);
             }
          });
         primaryStage.show();
@@ -196,9 +221,9 @@ public class BasicBoard extends Application {
         canvas.dark = false;
     }
     
-   
+  
     public void setgame(int kind,String ipString,int port,boolean xianshou){
-        primaryStage.hide();
+        //primaryStage.hide();
         clock = new Clock(Color.RED, Color.DARKGREEN);
 
         ChessState state = new ChessState(primaryStage,kind);
@@ -219,11 +244,20 @@ public class BasicBoard extends Application {
         }
 
         ClickState clickmove = new ClickState();
-        canvas = new MyPanel(state,listener);
+        int a1 = (int)(primaryStage.getWidth()/7*5);
+        int a2 = (int) (primaryStage.getHeight()-28);
+        ConstRec.maxsizex = a1;
+        ConstRec.maxsizey = a2;
+        ConstRec.update();
+        canvas = new MyPanel(state,listener,a1,a2);
+
+        
         canvas.setclick(clickmove);
         canvas.setBasicBoard(this);
         state.setPanel(canvas);
         Group root = new Group();
+        
+
         
         root.getChildren().add(canvas);
         vb = new VBox();
@@ -278,7 +312,7 @@ public class BasicBoard extends Application {
                          ((TCPListener)listener).stop();
                     }
                     clock.stop();
-                    homepage.resetsize();
+                       //homepage.resetsize(ConstRec.maxsizex,ConstRec.maxsizey);
                     primaryStage.setScene(homescreen);
                  }
              }
@@ -286,6 +320,7 @@ public class BasicBoard extends Application {
         
         sureButton.setOnAction(new EventHandler<ActionEvent>(){
              public void handle(ActionEvent me) {
+                 if (surekind==0){
                  if (state.kind>0)
                      ((AiListener)listener).stop();
                  else if (state.kind<0){ 
@@ -293,7 +328,13 @@ public class BasicBoard extends Application {
                  }
                  quxiao();
                  primaryStage.setScene(homescreen);
-                 
+                 } else {
+                     ConstRec.limitsecond = surekind;
+                     ((TCPListener)listener).sendmessage("restart");
+                     state.restart();
+                     quxiao();
+
+                 }
              }
         });
         
@@ -312,7 +353,7 @@ public class BasicBoard extends Application {
             
              public void handle(ActionEvent me) {       
                  
-                 System.out.println(messagekind);
+
                  if (messagekind==1){
                         quxiao();
                         state.backtohistory(listener.player_turn^1);         
@@ -325,7 +366,8 @@ public class BasicBoard extends Application {
                            ((TCPListener)listener).stop();
                        }
                        quxiao();
-                       homepage.resetsize();
+
+                       //homepage.resetsize(ConstRec.maxsizex,ConstRec.maxsizey);
                        primaryStage.setScene(homescreen);
                  
                  }
@@ -333,13 +375,9 @@ public class BasicBoard extends Application {
         });
         
         vb.getChildren().addAll(load,save,back,backhome);
-        root.getChildren().addAll(vb,sureButton,yesButton,noButton,messLabel,huiLabel);
-        gamescreen = new Scene(root);
-        canvas.setscreen(gamescreen);
-        
-        clock.setLayoutX(maxsize+border);
-        clock.setLayoutY(maxsize/8);
-        clock.getTransforms().add(new Scale(0.25f, 0.25f, 0, 0));
+ 
+
+
         clock.setFatherListener(listener);
         if (kind>0) clock.setVisible(false);
         else clock.setVisible(true);
@@ -354,7 +392,7 @@ public class BasicBoard extends Application {
         root.getChildren().add(clock);
         
                
-        liaotianBox = new VBox(1);
+        //liaotianBox = new VBox(1);
         HBox sendBox = new HBox(1);
         receiveField = new TextArea();
         receiveField.setEditable(false);
@@ -362,37 +400,76 @@ public class BasicBoard extends Application {
         sendField = new TextField();
         sendbutton = new Button("send");
         sendBox.getChildren().addAll(sendField,sendbutton);
-        liaotianBox.getChildren().addAll(receiveField,sendBox);
+        
+        if (kind>=0) {
+            sendBox.setVisible(false);
+            receiveField.setVisible(false);
+        } else{
+            sendBox.setVisible(true);
+            receiveField.setVisible(true);
+        }
             
-        root.getChildren().add(liaotianBox);
+        vb.getChildren().addAll(receiveField,sendBox);
+        sendbutton.setOnAction(new EventHandler<ActionEvent>(){
+             public void handle(ActionEvent me) {
+                ((TCPListener)listener).sendmessage("mail "+sendField.getText());
+                 addreceiveField("me: "+sendField.getText());
+                sendField.clear();
+             }
+        });
+        root.getChildren().addAll(vb,sureButton,yesButton,noButton,messLabel,huiLabel);
+
+       // root.getChildren().add(liaotianBox);
         root.getChildren().add(clickmove.circles);
 
-        
+        //StackPane rootpane = new StackPane(root);
+        gamescreen = new Scene(root,Color.GREEN);
+        canvas.setscreen(gamescreen);
         gamescreen.setCursor(Cursor.NONE);
+               resetsize();
+        clock.getTransforms().add(new Scale(0.25f, 0.25f, 0, 0));
+
         primaryStage.setScene(gamescreen);
         if (kind>0){
              ((AiListener)listener).ai.setPanel(canvas);
             ((AiListener)listener).start();
         }
-        if (kind!=-1)
+        if (kind>=0)
             state.restart();
         if (kind == 0) clock.restart();
-        resetsize();
-        
-        
-        /*
-        gamescreen.heightProperty().addListener(new ChangeListener<Number>() {  
+
+        if (!firstset){
+           return;
+        }
+        firstset = false;
+        primaryStage.heightProperty().addListener(new ChangeListener<Number>() {  
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                   ConstRec.maxsizey = newValue.intValue();
-                   ConstRec.gridsize = (ConstRec.maxsizey-2*ConstRec.border)/ConstRec.maxn;
-                   clickmove.resetsize();
+                    if (newValue.intValue()==0) return;   
+                    clock.getTransforms().add(new Scale(1f,newValue.floatValue()/oldValue.floatValue(), 0, 0));
+
+                    ConstRec.maxsizey = (int)(newValue.intValue()-28);//(double)newValue.intValue()/oldvalue*a2);
+                    ConstRec.update();
+                    canvas.resetsize();
                    resetsize();
             }
-         });*/
+         });
 
-        primaryStage.show();
+        
+        primaryStage.widthProperty().addListener(new ChangeListener<Number>() {  
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                   if (newValue.intValue()==0) return;
+                    ConstRec.maxsizex = (int)((double)newValue.intValue()/7*5);
+                           clock.getTransforms().add(new Scale(newValue.floatValue()/oldValue.floatValue(), 1f, 0, 0));
 
+                    ConstRec.update();
+                    canvas.resetsize();
+                    resetsize();
+            }
+         });
+
+        
     }
 
     public void setgame(int kind) {
@@ -402,18 +479,27 @@ public class BasicBoard extends Application {
         setgame(kind,"",0,xianshou);
     }
     public void protect() {
-        
-         load.setDisable(true);
-        save.setDisable(true);
-        back.setDisable(true);
-        
+         Platform.runLater(new  Runnable() {
+            @Override
+            public void run() {
+                bt1 = load.disableProperty().getValue();   
+                bt2 = save.disableProperty().getValue();
+                bt3 = back.disableProperty().getValue();
+                load.setDisable(true);
+               save.setDisable(true);
+               back.setDisable(true);
+              }
+        });
     }
     public void deprotect() {
-        
-        load.setDisable(false);
-        save.setDisable(false);
-        back.setDisable(false);
-        
+        Platform.runLater(new  Runnable() {
+            @Override
+            public void run() {
+        load.setDisable(bt1);
+        save.setDisable(bt2);
+        back.setDisable(bt3);
+                      }
+        });
     }
 
     

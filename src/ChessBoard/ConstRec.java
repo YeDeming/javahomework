@@ -21,4 +21,8 @@ public class ConstRec {
                                                       {-1,1},{1,-1},{-1,-1},{1,1}};
     public final static int maxstep = 500000;
     public static int limitsecond = 10;
+    
+    public static void update(){
+         ConstRec.gridsize = (Math.min(ConstRec.maxsizex,ConstRec.maxsizey)-2*ConstRec.border)/ConstRec.maxn;
+    }
 }

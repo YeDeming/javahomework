@@ -60,13 +60,12 @@ public class ChessState extends SampleChessState{
             flag[4][3] = 0;
             flag[3][3] = 1;
             flag[4][4] = 1;
-            flag[5][5] = 0;
+
             turn = 0;
             count = 4;
             history_cnt = 0;
             savehistory();
             updateavaid();
-
             panel.repaint();
 
     }
@@ -170,8 +169,9 @@ public class ChessState extends SampleChessState{
             if (avaidcnt==0) pass();
 
             
-            if (count==maxnsqr || avaidcnt == 0){	
+            if (count==maxn || avaidcnt == 0){	
                 finish = getwinner();
+                basicBoard.surekind = 0;
 
                 panel.gameover(finish);
             }

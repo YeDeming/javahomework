@@ -60,7 +60,7 @@ public class Homepage extends Group{
 
     VBox aibuttons;
     VBox buttons,vbip;
-    HBox limittime;
+    HBox limittime,b910;
     ImageView imageView,imageView2;
     Image image;
     public Homepage(BasicBoard basicBoard){
@@ -109,10 +109,11 @@ public class Homepage extends Group{
 
         aibuttons_part.getChildren().addAll(b5,b6,b7);
         aibuttons.getChildren().addAll(aibuttons_part,aixianshou);
-        
+        b910 = new HBox(5);
+        b910.getChildren().addAll(b9,b10);
         getChildren().add(imageView);
-        getChildren().add(b9);
-        getChildren().add(b10);
+        getChildren().add(b910);
+        //getChildren().add(b10);
         getChildren().add(imageView2);
         getChildren().add(buttons);
         getChildren().add(aibuttons);
@@ -327,16 +328,19 @@ public class Homepage extends Group{
        });
         resetsize();
     }
-    
     public void resetsize(){
+        
         int maxsizex = ConstRec.maxsizex;
         int maxsizey = ConstRec.maxsizey;
-        //titleText.setFont(new Font("Tahoma",45));
-        
+        resetsize(maxsizex,maxsizey);
+    }
+    public void resetsize(int maxsizex, int maxsizey){
+
         titleText.setFont(Font.font(null, FontWeight.BOLD, 70));
-        titleText.setTranslateX(maxsizex/3.1);
-        titleText.setTranslateY(maxsizey/3.5);
+        titleText.setLayoutX(maxsizex/3);
+        titleText.setLayoutY(maxsizey/3.5);
         buttons.setSpacing(maxsizey/50);
+        System.out.println(maxsizex);
         buttons.setLayoutX(maxsizex/3);
         buttons.setLayoutY(maxsizey/2);
         b1.setMinSize(maxsizex/5*2, maxsizey/10);
@@ -345,36 +349,32 @@ public class Homepage extends Group{
         b4.setMinSize(maxsizex/2.5, maxsizey/10);
 
         aibuttons.setSpacing(maxsizex/100);
-        aibuttons.setLayoutX(maxsizex/5*4+maxsizex/50);
+        aibuttons.setLayoutX(maxsizex/5*4+maxsizex/20);
         aibuttons.setLayoutY(maxsizey/2);
 
         b5.setMinSize(maxsizex/12.5, maxsizey/16.67);
         b6.setMinSize(maxsizex/12.5, maxsizey/16.67);
         b7.setMinSize(maxsizex/12.5, maxsizey/16.67);
         
-        b9.setTranslateX(maxsizex*4/5+maxsizex/50);
-        b9.setTranslateY(maxsizey*7/10);
+        b910.setLayoutX(maxsizex/5*4+maxsizex/20);
+        b910.setLayoutY(maxsizey*7/10);
         b9.setMinSize(maxsizex/12.5, maxsizey/16.67);
-
-        b10.setTranslateX(maxsizex-maxsizex/20+maxsizex/50);
-        b10.setTranslateY(maxsizey*7/10);
         b10.setMinSize(maxsizex/12.5, maxsizey/16.67);
-                
-
+        
         imageView.setX(maxsizex*29/40);
         imageView.setY(maxsizey/2);
 
         imageView2.setX(maxsizex*29/40);
         imageView2.setY(maxsizey*7/10);
         
-        vbip.setLayoutX(maxsizex*39/50);
+        vbip.setLayoutX(maxsizex*42/50);
         vbip.setLayoutY(maxsizey*4/5);        
         limitseconds.setMaxWidth(maxsizex/10);
         limitseconds.setMaxHeight(maxsizey/100);
         Font fontseconds = new Font("Tahoma",15);
         l1.setFont(fontseconds);limitseconds.setFont(fontseconds);
         limittime.setLayoutX(maxsizex/3-maxsizex/4-maxsizex/20);
-        limittime.setLayoutY(maxsizey*7/8);
+        limittime.setLayoutY(maxsizey*7/8                                                           );
                
     }
 }

@@ -1,5 +1,6 @@
 package Listener;
 
+import ChessBoard.BasicBoard;
 import ChessBoard.ChessState;
 import ChessBoard.Clock;
 import java.awt.event.MouseEvent;
@@ -16,6 +17,8 @@ public class TCPListener  extends FatherListener{
     int mykind;
     public Thread th;
     Clock clock;
+   boolean webisalive = true;
+    BasicBoard  basicBoard;
     public TCPListener(ChessState state,int mykind,String ipString,int port,boolean xianshou,Clock clock){
             super(state,0);
             this.clock = clock;
@@ -41,7 +44,19 @@ public class TCPListener  extends FatherListener{
             th.start();
     }
     public void stop(){
+        try{
+        if (mykind==-1){
+                server.stop();
+            } else{
+                client.stop();
+           }
+        }catch(Exception e){}
         th.stop();
+           
+    }
+
+    public void setBasicBoard(BasicBoard basicBoard) {
+        this.basicBoard = basicBoard;
     }
     
     public void next(int rawx,int rawy) {
@@ -102,5 +117,16 @@ public class TCPListener  extends FatherListener{
                     client.unit.checkclock();
             }
     }
+    
+    public void webinterrupt(){
+        if (webisalive){
+            stop();
+            webisalive = false;
+            basicBoard.messagekind = 0;
+            basicBoard.message("连接已断开");
+            
+        }
+    }
+    
  
 }

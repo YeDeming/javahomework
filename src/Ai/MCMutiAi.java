@@ -11,7 +11,7 @@ import ChessBoard.ConstRec;
 
 public class MCMutiAi extends FatherAi {
         Random random;
-        final static int limit_time = (int) (5000*0.9);
+        final static int limit_time = (int) (ConstRec.limitsecond*900);
         final static int maxstep = ConstRec.maxstep;
         final static int thread_num = 4;
         final static int maxstep_thread = maxstep * thread_num+1000;

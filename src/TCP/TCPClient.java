@@ -45,7 +45,7 @@ public class TCPClient extends Task<Integer>{
     }
 
     @Override 
-    protected Integer call() throws Exception {
+    protected Integer call() throws  Exception{
         System.out.println("Client Start");
         System.out.println(ip);
         System.out.println(port);
@@ -59,12 +59,22 @@ public class TCPClient extends Task<Integer>{
         System.out.println("myturn " + myturn);
         listener.player_turn = myturn;
         
+        strSocket = brInFromServer.readLine();
+        int time = Integer.valueOf(strSocket);
+        basicBoard.protect();
+        basicBoard.surekind = time;
+        basicBoard.message("将思考时间设置为"+strSocket+"s");
+        basicBoard.deprotect();
+        
         unit = new TCPUnit(brInFromServer, dosOutToServer, state,myturn,basicBoard,clock);
         unit.work();
         socketClient.close();
 
         return 0;
     }
-    
+        public void stop() throws IOException{
+        if (socketClient!=null)
+            socketClient.close();
+        }
 
 } 

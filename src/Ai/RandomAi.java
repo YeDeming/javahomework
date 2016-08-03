@@ -3,6 +3,7 @@ import ChessBoard.BasicBoard;
 import java.util.Random;
 
 import ChessBoard.ChessState;
+import javafx.application.Platform;
 
 public class RandomAi extends FatherAi{
     Random random;
@@ -15,7 +16,10 @@ public class RandomAi extends FatherAi{
     public void strategy() {
             // TODO Auto-generated method stub
             int r = random.nextInt(state.avaidcnt);
+            
             state.set(state.avaid[r]>>3,state.avaid[r] & 7);
+                        
+     
     }
 
 }

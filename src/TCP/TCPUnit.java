@@ -53,10 +53,13 @@ public class TCPUnit {
          }      
     }
     
-    public void work() throws IOException{
+    public void work() {
         checkclock();
+        try{
         while (state.finish==-2){
                 strSocket = brInFromother.readLine();
+                if (strSocket==null)
+                    throw new IOException();
                 System.out.println("Receive: " + strSocket);
 
                 if (state.finish!=-2) break;
@@ -79,9 +82,18 @@ public class TCPUnit {
                 } else if (args[0].equals("timeout")){
                     state.pass();
                     checkclock();
+                }else if (args[0].equals("mail")){
+                    String mails = "opp: " + strSocket.substring(5);
+                    basicBoard.addreceiveField(mails);
+                } else if (args[0].equals("restart")){
+                    state.restart();
                 }
                 if (state.finish!=-2) break;
            
+        }
+        }catch (Exception e){
+            listener.webinterrupt();
+                //System.out.println("连接已断开");
         }
     }
         public void sendmessage(int x,int y) {
@@ -89,6 +101,9 @@ public class TCPUnit {
             try{
                     dosOutToother.writeBytes(string);
             }catch (Exception e){
+                      //      System.out.println("连接已断开");
+            listener.webinterrupt();
+
             }
     }
 
@@ -97,6 +112,9 @@ public class TCPUnit {
             try{
                     dosOutToother.writeBytes(string);
             }catch (Exception e){
+                    //        System.out.println("连接已断开");
+            listener.webinterrupt();
+
             }
     }
 }

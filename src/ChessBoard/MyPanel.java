@@ -1,5 +1,6 @@
 package ChessBoard;
 
+import static ChessBoard.BasicBoard.border;
 import Listener.FatherListener;
 import javafx.scene.canvas.*;
 import javafx.scene.input.MouseEvent;
@@ -12,14 +13,16 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import Listener.*;
+import javafx.application.Platform;
 
 public class MyPanel extends Canvas {
     final static int border = ConstRec.border;
-    final static int maxn = ConstRec.maxn;;
-    final static int gridsize = ConstRec.gridsize;;
-    final static int maxsize = 2*border+maxn*gridsize;
-    final static int control_redpointsize = 25; 
-    final static int radius = ConstRec.gridsize/2-2;
+    final static int maxn = ConstRec.maxn;
+    
+    static int gridsize = ConstRec.gridsize;
+     int maxsizex,maxsizey,maxsize;
+    int control_redpointsize = 25; 
+    int radius = ConstRec.gridsize/2-2;
     
     ChessState state;
     int flag[][];
@@ -31,8 +34,24 @@ public class MyPanel extends Canvas {
     int finish = -2;
    BasicBoard basicBoard;
    public boolean dark = false;
-    public MyPanel(ChessState state, FatherListener listener){
-            super(maxsize+maxsize/5*2,maxsize);
+    public MyPanel(ChessState state, FatherListener listener,int maxsizex,int maxsizey){
+            super(maxsizex*7/5,maxsizey);
+            this.maxsizex = maxsizex;
+            this.maxsizey = maxsizey;
+            //System.out.println(maxsizex + " "+ maxsizey);
+            
+
+            
+             this.setHeight(maxsizey);
+            this.setWidth(maxsizex+maxsizex*2/5);
+            //System.out.println("wid:" + getWidth());
+            gridsize = ConstRec.gridsize;
+              this.maxsize = ConstRec.gridsize*maxn+2*border;
+
+            radius = ConstRec.gridsize/2-gridsize/25;
+            control_redpointsize = 25*gridsize/ConstRec.stdgridsize;
+
+            
             this.state = state;
             this.flag = state.flag;
             this.listener = listener;
@@ -69,7 +88,12 @@ public class MyPanel extends Canvas {
     }
     
     public void repaint(){
+        
+             Platform.runLater(new  Runnable() {
+            @Override
+            public void run() {
             draw(gc);  
+            }});
     }
 
     public void setBasicBoard(BasicBoard basicBoard) {
@@ -78,11 +102,15 @@ public class MyPanel extends Canvas {
  
     
     public void draw(GraphicsContext gc){      
-            //gc.clearRect(0, 0, getWidth(), getHeight());
-            if (dark)
+
+        if (dark){
                 gc.setFill(Color.DARKGREEN);
-            else
-                gc.setFill(Color.GREEN);	
+                basicBoard.gamescreen.fillProperty().set(Color.DARKGREEN);
+        }else
+        {       gc.setFill(Color.GREEN);	
+                        basicBoard.gamescreen.fillProperty().set(Color.GREEN);
+
+        }   
             gc.fillRect(0, 0, getWidth(),getHeight());
             
             gc.setStroke(Color.BLACK);  
@@ -125,7 +153,7 @@ public class MyPanel extends Canvas {
             }
             if (dark){
                 gc.setFill(Color.WHITE);
-                gc.fillRect(maxsize/4+border, maxsize/3+border, maxsize/2, maxsize/4);
+                gc.fillRect(maxsizex/2-maxsizex/4, maxsize/3+border,  maxsizex/2+3*border, maxsize/4);
             } else
             if( state.start && mousex!=-1){
 
@@ -175,23 +203,7 @@ public class MyPanel extends Canvas {
             basicBoard.message("白棋胜"); 
         }
 
-        /* 
-        try{
-                if (sum==0){
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "平局");
-                    alert.showAndWait();
-                }
-                else if (sum>0){
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "黑棋胜");
-                    alert.showAndWait();
-                }
-                else {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "白棋胜");
-                    alert.showAndWait();
-                  }
-        } catch (Exception e1) {
-                 //TODO: handle exception
-       }*/
+        
     }
 
     void setclick(ClickState clickmove) {
@@ -202,4 +214,19 @@ public class MyPanel extends Canvas {
         this.gamescene = gamescreen;
     }
 
+    void resetsize() {
+        maxsizex = ConstRec.maxsizex;
+        maxsizey = ConstRec.maxsizey;
+        gridsize = ConstRec.gridsize;
+        radius = ConstRec.gridsize/2-gridsize/25;
+        control_redpointsize = 25*gridsize/ConstRec.stdgridsize; 
+              this.maxsize = ConstRec.gridsize*maxn+2*border;
+
+        this.setHeight(maxsizey);
+        this.setWidth(maxsizex+maxsizex*2/5);
+         //           System.out.println("wid:" + getWidth());
+
+        repaint();
+    }
+    
 }
