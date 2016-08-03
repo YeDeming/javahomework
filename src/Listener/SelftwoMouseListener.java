@@ -19,19 +19,27 @@ public class SelftwoMouseListener  extends FatherListener{
             int x = (rawx-border);
             int y = (rawy-border);
 
-            if (rawx>=maxsize || rawy>=maxsize) return;
+       if (rawx>=maxsize+border || rawy>=maxsize+border) return;
 
             //System.out.println(y);
             if (x%gridsize==0 || y%gridsize==0) return;
             x /= gridsize;
             y /= gridsize;
+        if (x<0 || y<0 || x>=maxn || y>=maxn) return;
 
             if (state.flag[x][y]!=2) return;
+            int lastturn = state.turn;
             state.set(x,y);
-           huiButton.setDisable(false);
+            
+            if (state.canback(lastturn))
+                huiButton.setDisable(false);
            clock.restart();
 
     }
 
- 
+    @Override
+    public void timeout() {
+        state.pass();
+        clock.restart();
+    }
 }

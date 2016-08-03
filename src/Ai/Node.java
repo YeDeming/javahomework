@@ -67,11 +67,16 @@ public class Node extends SampleChessState{
 		count ++;
 
 		updateavaid();
-
+                                    //if (i==2 && j==2){
+                                        //for (int x = 0; x <8; ++ x)
+                                           // for (int j = 0)
+                                        //System.out.println("avaidcnt"+avaidcnt);
+                                    //}
 		if (count<maxnsqr && avaidcnt==0) pass();
 
 		if (count>=maxnsqr || avaidcnt == 0){		
-			finish = getwinner();
+                                            //finish = 1;
+                                            finish = getwinner();
 			//System.out.println("nihao" + finish);
 
 		} 

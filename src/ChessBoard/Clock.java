@@ -1,5 +1,6 @@
 package ChessBoard;
 
+import Listener.FatherListener;
 import Listener.TCPListener;
 import java.util.Calendar;
 import javafx.animation.KeyFrame;
@@ -30,7 +31,7 @@ import javafx.util.Duration;
         private Digit[] digits;
         private Timeline secondTimeline;
         int currentsecond;
-        TCPListener listener;
+        FatherListener listener;
         public Clock(Color onColor, Color offColor) {
             
             // create effect for on LEDs
@@ -88,7 +89,8 @@ import javafx.util.Duration;
                             refreshClocks();
                             if (currentsecond<=0){
                                 secondTimeline.stop();
-                                listener.sendmessage("timeout");
+                                
+                                listener.timeout();
                             }
                         }
                     }));
@@ -108,8 +110,8 @@ import javafx.util.Duration;
             }
         }
 
-    void setListener(TCPListener tcpListener) {
-        this.listener = tcpListener;
+       void setFatherListener(FatherListener Listener) {
+        this.listener = Listener;
     }
         
     }

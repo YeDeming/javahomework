@@ -69,11 +69,15 @@ public class TCPUnit {
                 }
                 else if (args[0].equals("hui")){
                     basicBoard.message_hui("对方请求悔棋，是否同意？");
+                    basicBoard.messagekind = 1;
                 } else if (args[0].equals("nohui")){
                     basicBoard.quxiao();
                 } else if (args[0].equals("yeshui")){
                     basicBoard.quxiao();
                     state.backtohistory(myturn);
+                    checkclock();
+                } else if (args[0].equals("timeout")){
+                    state.pass();
                     checkclock();
                 }
                 if (state.finish!=-2) break;

@@ -32,7 +32,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 /**
  *
@@ -40,15 +43,21 @@ import javafx.scene.transform.Scale;
  */
 public class BasicBoard extends Application {
      Scene gamescreen,homescreen;
-     Stage primaryStage;
+     public Stage primaryStage;
+
+     TextField sendField;
+     TextArea receiveField;
      static int maxsize = ConstRec.maxsize;
      static int border = ConstRec.border;
      FatherListener listener;
 
-     Button yesButton,noButton,sureButton,load,save,back,backhome;
+     Button yesButton,noButton,sureButton,load,save,back,backhome,sendbutton;
      Label messLabel,huiLabel = new Label();
      public MyPanel canvas;
-     int messagekind;
+     public int messagekind;
+     VBox vb,liaotianBox;
+     Homepage homepage;
+     Clock clock;
     public static void main(String[] args) {
         launch(args);
     }
@@ -57,34 +66,51 @@ public class BasicBoard extends Application {
         noButton = new Button("No");
         sureButton = new Button("确定");      
         messLabel = new Label();
-        messLabel.setFont(new Font("Tahoma",30));
 
         yesButton.setVisible(false);
         noButton.setVisible(false);
         sureButton.setVisible(false);
-        sureButton.setLayoutX(maxsize/2+border-maxsize/8);
-        sureButton.setLayoutY(maxsize/3+border+maxsize/4-maxsize/15);
-        sureButton.setMinSize(maxsize/4, maxsize/25);
-        
-        messLabel.setLayoutX(maxsize/2+border-maxsize/10);
-        messLabel.setLayoutY(maxsize/3+border);
-        messLabel.setMinSize(maxsize/5, maxsize/20);
         messLabel.setVisible(false);
-        huiLabel.setFont(new Font("Tahoma",15));
-        huiLabel.setLayoutX(maxsize/2+border-maxsize/5);
-        huiLabel.setLayoutY(maxsize/3+border);
-        huiLabel.setMinSize(maxsize/2, maxsize/20);
-        
         huiLabel.setVisible(false);
         yesButton.setVisible(false);
-        yesButton.setLayoutX(maxsize/2+border-maxsize/6);
-        yesButton.setLayoutY(maxsize/3+border+maxsize/4-maxsize/15);
-        yesButton.setMinSize(maxsize/8, maxsize/25);
         noButton.setVisible(false);
-        noButton.setLayoutX(maxsize/2+border+maxsize/6-maxsize/8);
-        noButton.setLayoutY(maxsize/3+border+maxsize/4-maxsize/15);
-        noButton.setMinSize(maxsize/8, maxsize/25);
+    }
+    public void resetsize(){
+        int maxsizex = ConstRec.maxsizex;
 
+        int maxsizey = ConstRec.maxsizey;
+
+        messLabel.setFont(new Font("Tahoma",30));
+        huiLabel.setFont(new Font("Tahoma",15));
+        sureButton.setLayoutX(maxsizex/2+border-maxsizex/8);
+        sureButton.setLayoutY(maxsizey/3+border+maxsizey/4-maxsizey/15);
+        sureButton.setMinSize(maxsizex/4, maxsizey/25);
+        messLabel.setLayoutX(maxsizex/2+border-maxsizex/10);
+        messLabel.setLayoutY(maxsizey/3+border);
+        messLabel.setMinSize(maxsizex/5, maxsizey/20);
+        huiLabel.setLayoutX(maxsizex/2+border-maxsizex/5);
+        huiLabel.setLayoutY(maxsizey/3+border);
+        huiLabel.setMinSize(maxsizex/2, maxsizey/20);
+        yesButton.setLayoutX(maxsizex/2+border-maxsizex/6);
+        yesButton.setLayoutY(maxsizey/3+border+maxsizey/4-maxsizey/15);
+        yesButton.setMinSize(maxsizex/8, maxsizey/25);
+        noButton.setLayoutX(maxsizex/2+border+maxsizex/6-maxsizex/8);
+        noButton.setLayoutY(maxsizey/3+border+maxsizey/4-maxsizey/15);
+        noButton.setMinSize(maxsizex/8, maxsizey/25);
+        load.setMinSize(maxsizex/6.25,maxsizey/16.67);
+        save.setMinSize(maxsizex/6.25,maxsizey/16.67);
+        backhome.setMinSize(maxsizex/6.25,maxsizey/16.67);
+        back.setMinSize(maxsizex/6.25,maxsizey/16.67);
+
+        vb.setLayoutX(ConstRec.maxsizex+ConstRec.border);
+        vb.setLayoutY(ConstRec.maxsizey/5);
+        vb.setSpacing(maxsizey/100);
+        
+        liaotianBox.setLayoutX(maxsize);
+        liaotianBox.setLayoutY(maxsize*3/5);
+        sendField.setMaxWidth(maxsize/10*3);
+        receiveField.setMaxWidth(maxsize/5*2-5);
+        receiveField.setMaxHeight(maxsize*3/10);
     }
     
     @Override
@@ -92,16 +118,29 @@ public class BasicBoard extends Application {
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Reversi");
      
-        homescreen = new Scene(new Homepage(this),600,500,Color.WHITE);
+        homepage = new Homepage(this);
+        homescreen = new Scene(homepage,ConstRec.maxsizex*7/5,ConstRec.maxsizey,Color.WHITE);
         
         primaryStage.setScene(homescreen);
         primaryStage.getIcons().add(new Image(BasicBoard.class.getResource( "/Resource/icon.png").toExternalForm()));
-        primaryStage.widthProperty().addListener(new ChangeListener<Number>() {  
+ 
+        homescreen.widthProperty().addListener(new ChangeListener<Number>() {  
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                   System.out.println("Window Size Change:" + oldValue.toString() + "," + newValue.toString());  
+
+                    ConstRec.maxsizex = newValue.intValue()*5/6;
+                   homepage.resetsize();
             }
-         });          
+         });
+        
+         homescreen.heightProperty().addListener(new ChangeListener<Number>() {  
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    ConstRec.maxsizey = newValue.intValue();
+                   homepage.resetsize();
+
+            }
+         });
         primaryStage.show();
     }
     
@@ -160,14 +199,17 @@ public class BasicBoard extends Application {
    
     public void setgame(int kind,String ipString,int port,boolean xianshou){
         primaryStage.hide();
-        Clock clock = new Clock(Color.RED, Color.DARKGREEN);
+        clock = new Clock(Color.RED, Color.DARKGREEN);
 
         ChessState state = new ChessState(primaryStage,kind);
         state.setBasicBoard(this);
         if (kind==0){
             listener = new SelftwoMouseListener(state,clock);
         } else if (kind >0){
-             listener  = new AiListener(state,0,kind,this);
+            if (xianshou)
+                listener  = new AiListener(state,0,kind,this);
+            else
+                listener  = new AiListener(state,1,kind,this);
         } else if (kind==-1){
             listener = new TCPListener(state,kind,"127.0.0.1",port,xianshou,clock);
             ((TCPListener)listener).server.setBasicBoard(this);
@@ -184,11 +226,8 @@ public class BasicBoard extends Application {
         Group root = new Group();
         
         root.getChildren().add(canvas);
-        VBox vb = new VBox();
-        vb.setLayoutX(ConstRec.maxsize+ConstRec.border);
-        vb.setLayoutY(100);
+        vb = new VBox();
         load = new Button("载入存档");
-        load.setMinSize(80, 30);
         load.setOnAction(new EventHandler<ActionEvent>(){
              public void handle(ActionEvent me) {
                  state.loadchess();
@@ -196,7 +235,6 @@ public class BasicBoard extends Application {
         });
         
         save = new Button("保存游戏");
-        save.setMinSize(80, 30);
         save.setOnAction(new EventHandler<ActionEvent>(){
              public void handle(ActionEvent me) {
                  state.savechess();
@@ -210,13 +248,13 @@ public class BasicBoard extends Application {
         back = new Button("悔棋");
         back.setDisable(true);
 
-        back.setMinSize(80, 30);
         back.setOnAction(new EventHandler<ActionEvent>(){
              public void handle(ActionEvent me) {
-                 messagekind = 1;
-                if (kind==0){
-                 state.backtohistory(1-state.turn);
-                  clock.restart();
+
+                 
+                 if (kind==0){
+                    state.backtohistory(1-state.turn);
+                    clock.restart();
                 }
                 else if (kind>0){
                  state.backtohistory(listener.player_turn);
@@ -227,7 +265,6 @@ public class BasicBoard extends Application {
         });
         listener.setHuiButton(back);
         backhome = new Button("主菜单");
-        backhome.setMinSize(80, 30);
         backhome.setOnAction(new EventHandler<ActionEvent>(){
              public void handle(ActionEvent me) {
                  if (state.start && state.finish==-2) {
@@ -240,6 +277,8 @@ public class BasicBoard extends Application {
                     } else if (state.kind<0){
                          ((TCPListener)listener).stop();
                     }
+                    clock.stop();
+                    homepage.resetsize();
                     primaryStage.setScene(homescreen);
                  }
              }
@@ -272,24 +311,27 @@ public class BasicBoard extends Application {
         yesButton.setOnAction(new EventHandler<ActionEvent>(){
             
              public void handle(ActionEvent me) {       
+                 
+                 System.out.println(messagekind);
                  if (messagekind==1){
                         quxiao();
                         state.backtohistory(listener.player_turn^1);         
                         ((TCPListener)listener).sendmessage("yeshui");
                  } else if (messagekind == 0){
+                     clock.stop();
                         if (state.kind>0)
                            ((AiListener)listener).stop();
                        else if (state.kind<0){ 
                            ((TCPListener)listener).stop();
                        }
                        quxiao();
+                       homepage.resetsize();
                        primaryStage.setScene(homescreen);
                  
                  }
              }
         });
         
-        vb.setSpacing(10);
         vb.getChildren().addAll(load,save,back,backhome);
         root.getChildren().addAll(vb,sureButton,yesButton,noButton,messLabel,huiLabel);
         gamescreen = new Scene(root);
@@ -298,10 +340,11 @@ public class BasicBoard extends Application {
         clock.setLayoutX(maxsize+border);
         clock.setLayoutY(maxsize/8);
         clock.getTransforms().add(new Scale(0.25f, 0.25f, 0, 0));
+        clock.setFatherListener(listener);
         if (kind>0) clock.setVisible(false);
         else clock.setVisible(true);
         
-        if (kind<0) {
+        if (kind!=0) {
             save.setVisible(false);
             load.setVisible(false);
         } else{
@@ -309,8 +352,21 @@ public class BasicBoard extends Application {
             load.setVisible(true);
         }
         root.getChildren().add(clock);
+        
+               
+        liaotianBox = new VBox(1);
+        HBox sendBox = new HBox(1);
+        receiveField = new TextArea();
+        receiveField.setEditable(false);
+        
+        sendField = new TextField();
+        sendbutton = new Button("send");
+        sendBox.getChildren().addAll(sendField,sendbutton);
+        liaotianBox.getChildren().addAll(receiveField,sendBox);
+            
+        root.getChildren().add(liaotianBox);
         root.getChildren().add(clickmove.circles);
-       
+
         
         gamescreen.setCursor(Cursor.NONE);
         primaryStage.setScene(gamescreen);
@@ -321,6 +377,20 @@ public class BasicBoard extends Application {
         if (kind!=-1)
             state.restart();
         if (kind == 0) clock.restart();
+        resetsize();
+        
+        
+        /*
+        gamescreen.heightProperty().addListener(new ChangeListener<Number>() {  
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                   ConstRec.maxsizey = newValue.intValue();
+                   ConstRec.gridsize = (ConstRec.maxsizey-2*ConstRec.border)/ConstRec.maxn;
+                   clickmove.resetsize();
+                   resetsize();
+            }
+         });*/
+
         primaryStage.show();
 
     }
@@ -328,7 +398,9 @@ public class BasicBoard extends Application {
     public void setgame(int kind) {
         setgame(kind,"",0,false);
     }
-
+    public void setgame(int kind,boolean xianshou) {
+        setgame(kind,"",0,xianshou);
+    }
     public void protect() {
         
          load.setDisable(true);

@@ -11,10 +11,10 @@ import ChessBoard.ConstRec;
 
 public class MCMutiAi extends FatherAi {
         Random random;
-        final static int limit_time = (int) (2000*0.9);
+        final static int limit_time = (int) (5000*0.9);
         final static int maxstep = ConstRec.maxstep;
         final static int thread_num = 4;
-        final static int maxstep_thread = maxstep * thread_num;
+        final static int maxstep_thread = maxstep * thread_num+1000;
         final static double c = 1.414;
         double sqrtArray[] = new double[maxstep_thread];
         double inv[] = new double[maxstep_thread];
@@ -29,7 +29,7 @@ public class MCMutiAi extends FatherAi {
         public MCMutiAi(ChessState state,int ai_turn,BasicBoard basicBoard) {
                 super(state,ai_turn,basicBoard);
                 // TODO Auto-generated constructor stub
-                random = new Random();
+                random = new Random(5);
                 for (int i = 1; i < maxstep_thread; ++i) {
                         sqrtArray[i] = 1.0 / Math.sqrt(i);
                         inv[i] = 1.0 / i;
@@ -84,6 +84,7 @@ public class MCMutiAi extends FatherAi {
                 Node currentnode = pool[root];
                 double maxP = -1e5;
                 int maxV = -1;
+                System.out.println("-----------------");
 
                 int  i,x = 0;
                 for (i = 0; i < currentnode.avaidcnt; ++ i){
@@ -91,6 +92,8 @@ public class MCMutiAi extends FatherAi {
                         int j = currentnode.son[x];
                         if (j !=-1){
                                 double value = (double)pool[j].Q * inv[pool[j].N];
+                                System.out.println(j+" "+(x>>3) + " "  + (x&7)+  " "+value);
+
                                 if (value > maxP) {
                                         maxP = value;
                                         maxV = x;

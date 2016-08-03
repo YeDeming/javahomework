@@ -50,7 +50,6 @@ public class MCThread extends  Task<Integer>{
                             if (currentnode.N>0)
                                     c2 = data.c * Math.sqrt(2 * Math.log(currentnode.N));
 
-
                     for (i = 0; i < currentnode.avaidcnt; ++ i){
                                     x = currentnode.avaid[i];
                                     int j = currentnode.son[x];
@@ -71,6 +70,11 @@ public class MCThread extends  Task<Integer>{
                         data.pool[tot] = new Node(currentnode);
                         data.pool[tot].setfa(v);
                         data.pool[tot].set(x);
+                                if (data.pool[tot].finish==1){
+                                    data.pool[tot].turn = 1;
+                                } else  if (data.pool[tot].finish==-1){
+                                    data.pool[tot].turn = 0;
+                                } 
                         wait = currentnode;
                         waitset = x;
                         return tot;
@@ -101,25 +105,30 @@ public class MCThread extends  Task<Integer>{
                     current.set(current.avaid[w]);
             }
 
-            return current.finish;
+               if (data.ai_turn==0)
+                    return -current.finish;
+                else
+                    return current.finish;    
     }
 
     public void Backup(int v,int delta){
+
             while (v != -1) {
-                    synchronized (data.pool[v]) {
+                    //synchronized (data.pool[v]) {
                             Node current = data.pool[v];
-                            ++current.N;
-                            if (current.turn==data.state.turn)
+                            if (current.turn==data.ai_turn)
                                     current.Q += delta;
                             else
                                     current.Q -= delta;
+                            ++current.N;
                             if(current==wait)
                             {
                                     wait.son[waitset] = tot;
                                     ++tot;
                             }
+                            
                             v = current.fa;
-                    }
+                  //  }
     }
     }
 }

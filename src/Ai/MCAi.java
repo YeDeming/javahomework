@@ -13,7 +13,7 @@ import ChessBoard.ConstRec;
 public class MCAi extends FatherAi {
         Random random;
         final static int maxstep = ConstRec.maxstep;
-        final static int limit_time = (int) (2000*0.9);
+        final static int limit_time = (int) (5000*0.9);
         final static double c = 1.414;
         double sqrtArray[] = new double[maxstep];
         double inv[] = new double[maxstep];
@@ -36,7 +36,9 @@ public class MCAi extends FatherAi {
                 // TODO Auto-generated method stub
                 begin_time = System.currentTimeMillis(); //获取开始时间
                 int ans = UCTSearch();
+                //System.out.println("my turn:" + ai_turn);
                 state.set(ans>>3,ans & 7);
+                
         }
 
         public int  UCTSearch(){	
@@ -50,6 +52,7 @@ public class MCAi extends FatherAi {
                         int v = TreePolicy(root);
 
                         int delta = DefaultPolicy(v);
+                        //System.out.println(delta);
                         Backup(v, delta);
                 }
                 System.out.println("Calc" + i + "steps");
@@ -89,12 +92,18 @@ public class MCAi extends FatherAi {
 
 
                         if (i < currentnode.avaidcnt){
+                           
                                 pool[tot] = new Node(currentnode);
                                 pool[tot].setfa(v);
 
                                 pool[tot].set(x);
-
-
+       
+                                
+                                if (pool[tot].finish==1){
+                                    pool[tot].turn = 1;
+                                } else  if (pool[tot].finish==-1){
+                                    pool[tot].turn = 0;
+                                } 
                                 currentnode.son[x] = tot;
                                 return tot++;
                         }
@@ -118,32 +127,47 @@ public class MCAi extends FatherAi {
                         int w = random.nextInt(current.avaidcnt);
                         current.set(current.avaid[w]);
                 }
-
-                return current.finish;
+                if (ai_turn==0)
+                    return -current.finish;
+                else
+                    return current.finish;
         }
 
         public void Backup(int v,int delta){
                 while (v != -1) {
                         ++pool[v].N;
-                        if (pool[v].turn==state.turn)
+                        if (pool[v].turn==ai_turn)
                                 pool[v].Q += delta;
                         else
                                 pool[v].Q -= delta;
                         v = pool[v].fa;
                 }
         }
+        
+        /*public double fixvalue(int w, int N){
+            if (w==0 || w==7 || w==63 || w==56) return 1.0/N;
+            int x = (w>>3);
+            int y = (w&7);
+            if (x==0 || x==8){
+                int l = y;int r = y;
+                while (state.flag[])
+            }
+            return 0;
+        }*/
 
         public int BestChildTrue(int root){
                 Node currentnode = pool[root];
                 double maxP = -1e5;
                 int maxV = -1;
-
+                System.out.println("-----------------");
                 int  i,x = 0;
                 for (i = 0; i < currentnode.avaidcnt; ++ i){
                         x = currentnode.avaid[i];
                         int j = currentnode.son[x];
                         if (j !=-1){
                                 double value = (double)pool[j].Q * inv[pool[j].N];
+                                //value+=fixvalue(x,currentnode.avaidcnt);
+                                System.out.println((x>>3) + " "  + (x&7)+  " "+value);
                                 if (value > maxP) {
                                         maxP = value;
                                         maxV = x;
@@ -153,5 +177,5 @@ public class MCAi extends FatherAi {
                 return maxV;
         }
 
-        
+
 }

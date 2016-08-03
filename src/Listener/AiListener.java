@@ -17,6 +17,7 @@ public class AiListener  extends FatherListener{
     Thread th;
     public AiListener(ChessState state,int player_turn,int kind, BasicBoard basicBoard){
             super(state,player_turn);
+            System.out.println("player_turn:" + player_turn);
             this.kind = kind;
             if (kind==1){
                 ai = new RandomAi(state,player_turn^1,basicBoard);
@@ -47,7 +48,7 @@ public class AiListener  extends FatherListener{
         // TODO Auto-generated method stub
         if (player_turn!=state.turn)
             return;
-       if (rawx>=maxsize || rawy>=maxsize) return;
+       if (rawx>=maxsize+border || rawy>=maxsize+border) return;
 
         int x = (rawx-border);
         int y = (rawy-border);
@@ -55,11 +56,11 @@ public class AiListener  extends FatherListener{
         if (x%gridsize==0 || y%gridsize==0) return;
         x /= gridsize;
         y /= gridsize;
-
+        if (x<0 || y<0 || x>=maxn || y>=maxn) return;
         if (state.flag[x][y]!=2) return;
         state.set(x,y);
            huiButton.setDisable(false);
 
-}
-
+    }
+    public void timeout(){}
 }

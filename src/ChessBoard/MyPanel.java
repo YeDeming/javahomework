@@ -32,7 +32,7 @@ public class MyPanel extends Canvas {
    BasicBoard basicBoard;
    public boolean dark = false;
     public MyPanel(ChessState state, FatherListener listener){
-            super(maxsize+maxsize/5,maxsize);
+            super(maxsize+maxsize/5*2,maxsize);
             this.state = state;
             this.flag = state.flag;
             this.listener = listener;
@@ -58,6 +58,7 @@ public class MyPanel extends Canvas {
             setOnMouseClicked(new EventHandler<MouseEvent>(){
                     public void handle(MouseEvent me) {
                         if (finish!=-2 || state.start==false) return;
+                        if (dark) return;
 
                         int xx = (int) Math.round(me.getX());
                         int yy = (int) Math.round(me.getY());

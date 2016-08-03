@@ -60,6 +60,7 @@ public class ChessState extends SampleChessState{
             flag[4][3] = 0;
             flag[3][3] = 1;
             flag[4][4] = 1;
+            flag[5][5] = 0;
             turn = 0;
             count = 4;
             history_cnt = 0;
@@ -80,7 +81,7 @@ public class ChessState extends SampleChessState{
     }
     public boolean canback(int backup_turn){
         if (kind==0){
-             if (backup[backup_turn]>2) return false;  
+             if (backup[backup_turn]>=2) return false;  
         }
          int tmp = history_cnt-1;
         if (history_turn[tmp]==backup_turn) tmp--;
@@ -109,6 +110,7 @@ public class ChessState extends SampleChessState{
 
         updateavaid();
         panel.repaint();
+        
         if (kind==0 && !canback(turn)){
             basicBoard.back.setDisable(true);
         } else 
@@ -168,7 +170,7 @@ public class ChessState extends SampleChessState{
             if (avaidcnt==0) pass();
 
             
-            if (count==maxn+2 || avaidcnt == 0){	
+            if (count==maxnsqr || avaidcnt == 0){	
                 finish = getwinner();
 
                 panel.gameover(finish);
@@ -183,7 +185,7 @@ public class ChessState extends SampleChessState{
     }
 
     public void loadchess() {
-    File file = fileChooser.showOpenDialog(primaryStage.getOwner());
+        File file = fileChooser.showOpenDialog(primaryStage.getOwner());
         if (file == null) return;
 
         try{
@@ -206,6 +208,7 @@ public class ChessState extends SampleChessState{
         savehistory();
         updateavaid();
         panel.repaint();
+        basicBoard.clock.restart();
     }
 
     public void savechess(){

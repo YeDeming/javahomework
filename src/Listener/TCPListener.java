@@ -51,11 +51,12 @@ public class TCPListener  extends FatherListener{
                 return;
             int x = (rawx-border);
             int y = (rawy-border);
-            if (rawx>=maxsize || rawy>=maxsize) return;
+            if (rawx>=maxsize+border || rawy>=maxsize+border) return;
 
             if (x%gridsize==0 || y%gridsize==0) return;
             x /= gridsize;
             y /= gridsize;
+        if (x<0 || y<0 || x>=maxn || y>=maxn) return;
 
             if (state.flag[x][y]!=2) return;
             state.set(x,y);
@@ -92,15 +93,14 @@ public class TCPListener  extends FatherListener{
             }
     }
 
-    /*public void setclock(Clock clock) {
-        this.clock = clock;
-             if (mykind==-1){
-                server.setClock(clock);
+    public void timeout(){
+        sendmessage("timeout");
+        state.pass();
+          if (mykind==-1){  
+                    server.unit.checkclock();   
             } else{
-                 System.out.println("client set clock");
-                client.setClock(clock);
+                    client.unit.checkclock();
             }
-    }*/
-
+    }
  
 }

@@ -118,7 +118,8 @@ public class SampleChessState {
             if (count<maxnsqr && avaidcnt==0) pass();
 
             if (count>=maxnsqr || avaidcnt == 0){		
-                    finish = getwinner();
+
+                finish = getwinner();
             } 
     }
 

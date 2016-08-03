@@ -12,7 +12,7 @@ abstract public class FatherListener{
     final static int maxn = ConstRec.maxn;;
     final static int gridsize = ConstRec.gridsize;;
     final static int maxsize = 2*border+maxn*gridsize;
-    ChessState state;
+    public ChessState state;
     Button huiButton;
     public int player_turn;
     public FatherListener(ChessState state,int player_turn) {
@@ -25,5 +25,7 @@ abstract public class FatherListener{
     public void setHuiButton(Button huiButton) {
         this.huiButton = huiButton;
     }
+   public abstract void timeout();
+
     
 }
