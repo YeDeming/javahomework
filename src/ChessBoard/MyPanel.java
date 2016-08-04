@@ -39,10 +39,8 @@ public class MyPanel extends Canvas {
             this.maxsizex = maxsizex;
             this.maxsizey = maxsizey;
             //System.out.println(maxsizex + " "+ maxsizey);
-            
 
-            
-             this.setHeight(maxsizey);
+            this.setHeight(maxsizey);
             this.setWidth(maxsizex+maxsizex*2/5);
             //System.out.println("wid:" + getWidth());
             gridsize = ConstRec.gridsize;
@@ -65,10 +63,11 @@ public class MyPanel extends Canvas {
                         mousex = (int) Math.round(me.getX());
                         mousey = (int) Math.round(me.getY());
                         if (mousex>=maxsize || state.start==false){
-                            gamescene.setCursor(Cursor.DEFAULT);
+                            setCursor(Cursor.DEFAULT);
                             repaint();
                         } else{
-                            gamescene.setCursor(Cursor.DISAPPEAR);
+                            
+                            setCursor(Cursor.NONE);
                             repaint();
                         }
                     }
@@ -173,21 +172,21 @@ public class MyPanel extends Canvas {
                             
                     int a=radius/3*2;
 
-                    gc.fillRoundRect(mousex-12, mousey-3, 24, 6, 12, 3);
+                    gc.fillRoundRect(mousex-gridsize/5, mousey-gridsize/20, gridsize*2/5, gridsize/10, gridsize/5, gridsize/20);
 
-                    gc.fillRoundRect(mousex-3, mousey-12, 6, 24, 3, 12);
+                    gc.fillRoundRect(mousex-gridsize/20, mousey-gridsize/5, gridsize/10, gridsize*2/5, gridsize/20, gridsize/5);
 
                     
                     double aa = mousex - maxsize/2;
                     double bb = mousey - maxsize/2;
                     if (aa==0 && bb==0) return; 
-                    double tmp = Math.sqrt(aa*aa+bb*bb)/22;
+                    double tmp = Math.sqrt(aa*aa+bb*bb)/(gridsize/2.6);
                     aa/=tmp;
                     bb/=tmp;
                     int mx = mousex+(int)Math.round(aa);
                     int my = mousey+(int)Math.round(bb);
                     gc.setFill(Color.PINK);		
-                    gc.fillOval(mx-6,my-6, 12, 12);
+                    gc.fillOval(mx-gridsize/10,my-gridsize/10, gridsize/5, gridsize/5);
                     
             }
     }
@@ -220,7 +219,7 @@ public class MyPanel extends Canvas {
         gridsize = ConstRec.gridsize;
         radius = ConstRec.gridsize/2-gridsize/25;
         control_redpointsize = 25*gridsize/ConstRec.stdgridsize; 
-              this.maxsize = ConstRec.gridsize*maxn+2*border;
+       this.maxsize = ConstRec.maxsize;
 
         this.setHeight(maxsizey);
         this.setWidth(maxsizex+maxsizex*2/5);

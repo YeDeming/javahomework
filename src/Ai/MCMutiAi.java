@@ -1,5 +1,6 @@
 package Ai;
 
+
 import ChessBoard.BasicBoard;
 import java.util.ArrayList;
 import java.util.Random;
@@ -11,7 +12,7 @@ import ChessBoard.ConstRec;
 
 public class MCMutiAi extends FatherAi {
         Random random;
-        final static int limit_time = (int) (ConstRec.limitsecond*900);
+        int limit_time = (int) (ConstRec.limitsecond*900);
         final static int maxstep = ConstRec.maxstep;
         final static int thread_num = 4;
         final static int maxstep_thread = maxstep * thread_num+1000;
@@ -29,6 +30,8 @@ public class MCMutiAi extends FatherAi {
         public MCMutiAi(ChessState state,int ai_turn,BasicBoard basicBoard) {
                 super(state,ai_turn,basicBoard);
                 // TODO Auto-generated constructor stub
+
+                
                 random = new Random(5);
                 for (int i = 1; i < maxstep_thread; ++i) {
                         sqrtArray[i] = 1.0 / Math.sqrt(i);

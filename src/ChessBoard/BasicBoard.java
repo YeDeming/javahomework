@@ -25,13 +25,16 @@ import javafx.scene.shape.ArcType;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import Listener.*;
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+
 
 import java.awt.Panel;
+import java.io.File;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -48,7 +51,7 @@ public class BasicBoard extends Application {
 
      TextField sendField;
      TextArea receiveField;
-     static int maxsize = ConstRec.maxsize;
+     static int maxsize = ConstRec.stdmaxsize;
      static int border = ConstRec.border;
      FatherListener listener;
 
@@ -59,9 +62,13 @@ public class BasicBoard extends Application {
      VBox vb;//,liaotianBox;
      Homepage homepage;
      Clock clock;
-     boolean bt1,bt2,bt3;
+     boolean bt1,bt2,bt3,loadclick,bt4;
      boolean firstset = true;
      public int surekind;
+     public Music music ;
+     ChoiceBox<String> cb;
+     String[] list;
+     String storepath = ConstRec.storepath;
     public static void main(String[] args) {
         launch(args);
     }
@@ -78,6 +85,8 @@ public class BasicBoard extends Application {
         huiLabel.setVisible(false);
         yesButton.setVisible(false);
         noButton.setVisible(false);
+        music = new Music("bgm.mp3");
+
     }
     public void addreceiveField(String string){
         receiveField.setText(receiveField.getText()+string+'\n');
@@ -109,7 +118,7 @@ public class BasicBoard extends Application {
         backhome.setMinSize(maxsizex/6.25,maxsizey/16.67);
         back.setMinSize(maxsizex/6.25,maxsizey/16.67);
 
-        vb.setLayoutX(ConstRec.maxsizex+ConstRec.border);
+        vb.setLayoutX(ConstRec.maxsizex+ConstRec.border*2);
         vb.setLayoutY(ConstRec.maxsizey/5);
         vb.setSpacing(maxsizey/100);
         
@@ -119,28 +128,30 @@ public class BasicBoard extends Application {
         receiveField.setMaxWidth(maxsizex*7/5-(maxsizex+ConstRec.border*3));
         receiveField.setMaxHeight(maxsizex*4/10);
         clock.setLayoutX(maxsizex+ConstRec.border*2);
-        clock.setLayoutY(maxsize/8);
-
+        clock.setLayoutY(maxsizey/8);
+        //cb.setLayoutX(load.getLayoutX());
+        
+        //cb.setLayoutY(load.getLayoutY());
     }
     
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) { 
+        music.start();
+        //Thread mu = new Thread(music);
+        //mu.setDaemon(true);
+        //mu.run();
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Reversi");
-     
         homepage = new Homepage(this);
         StackPane home = new StackPane(homepage);
-        //System.out.println(primaryStage.getHeight()+" "+primaryStage.getWidth());
- //imageView.setPreserveRatio(true);
-        //imageView.fitHeightProperty(
+        
         home.setPrefHeight(ConstRec.maxsizey);
         home.setPrefWidth(ConstRec.maxsizex*7/5);
         homescreen = new Scene(home,Color.WHITE);
+        primaryStage.getIcons().add(new Image(BasicBoard.class.getResource( File.separator+"Resource"+File.separator+"icon.png").toExternalForm()));
 
         primaryStage.setScene(homescreen);
-        primaryStage.getIcons().add(new Image(BasicBoard.class.getResource( "/Resource/icon.png").toExternalForm()));
-        //oldwidth = homescreen.getWidth();
-        //                    System.out.println(oldwidth);
+
         
         primaryStage.widthProperty().addListener(new ChangeListener<Number>() {  
             @Override
@@ -151,7 +162,7 @@ public class BasicBoard extends Application {
                    homepage.resetsize();
                    home.setPrefHeight(ConstRec.maxsizey);
                     home.setPrefWidth(ConstRec.maxsizex*7/5);
-                   //homescreen.
+
             }
          });
         
@@ -173,7 +184,7 @@ public class BasicBoard extends Application {
        Platform.runLater(new  Runnable() {
             @Override
             public void run() {
-                gamescreen.setCursor(Cursor.DEFAULT);
+                canvas.setCursor(Cursor.DEFAULT);
                 canvas.dark = true;
 
                 messLabel.setVisible(true);
@@ -192,7 +203,7 @@ public class BasicBoard extends Application {
              Platform.runLater(new  Runnable() {
             @Override
             public void run() {
-                gamescreen.setCursor(Cursor.DEFAULT);
+                canvas.setCursor(Cursor.DEFAULT);
                 canvas.dark = true;
                 huiLabel.setText(LabelString);
                 huiLabel.setVisible(true);
@@ -209,6 +220,8 @@ public class BasicBoard extends Application {
        }
        
     public void quxiao() {
+         canvas.setCursor(Cursor.NONE);
+
         messLabel.setVisible(false);
         sureButton.setVisible(false);
         huiLabel.setVisible(false);
@@ -224,6 +237,7 @@ public class BasicBoard extends Application {
   
     public void setgame(int kind,String ipString,int port,boolean xianshou){
         //primaryStage.hide();
+
         clock = new Clock(Color.RED, Color.DARKGREEN);
 
         ChessState state = new ChessState(primaryStage,kind);
@@ -237,9 +251,11 @@ public class BasicBoard extends Application {
                 listener  = new AiListener(state,1,kind,this);
         } else if (kind==-1){
             listener = new TCPListener(state,kind,"127.0.0.1",port,xianshou,clock);
+            ((TCPListener)listener).setBasicBoard(this);
             ((TCPListener)listener).server.setBasicBoard(this);
         } else {
             listener = new TCPListener(state,kind,ipString,port,false,clock);
+             ((TCPListener)listener).setBasicBoard(this);
             ((TCPListener)listener).client.setBasicBoard(this);
         }
 
@@ -262,16 +278,41 @@ public class BasicBoard extends Application {
         root.getChildren().add(canvas);
         vb = new VBox();
         load = new Button("载入存档");
+        loadclick = false;
         load.setOnAction(new EventHandler<ActionEvent>(){
              public void handle(ActionEvent me) {
-                 state.loadchess();
+                 updatecb();
+                 if (list.length==0) return;//load.setDisable(true);
+                 if (!loadclick){
+                        state.start = false;
+                        cb.setVisible(true);
+                        load.setText("确定");
+                 } else{
+                     state.start = true;
+                     clock.restart();
+                     cb.setVisible(false);
+                     load.setText("载入存档");
+                 }
+                 loadclick^=true;
+                     //state.loadchess();
              }
         });
-        
+                
+        cb = new ChoiceBox<String>();  
+        cb.setVisible(false);
+       updatecb();
+         cb.getSelectionModel().selectedIndexProperty().addListener((ov,oldv,newv)->{  
+              
+             int w = (newv.intValue());
+             if (w<0) return;
+             state.loadchess(storepath+list[w]);
+         });  
+          
         save = new Button("保存游戏");
         save.setOnAction(new EventHandler<ActionEvent>(){
              public void handle(ActionEvent me) {
                  state.savechess();
+                 updatecb();
              }
         });
         
@@ -306,6 +347,7 @@ public class BasicBoard extends Application {
                      message_hui("是否要放弃当前游戏?");
                  }
                  else{
+                    primaryStage.setScene(homescreen);
                     if (state.kind>0){
                          ((AiListener)listener).stop();
                     } else if (state.kind<0){
@@ -313,7 +355,6 @@ public class BasicBoard extends Application {
                     }
                     clock.stop();
                        //homepage.resetsize(ConstRec.maxsizex,ConstRec.maxsizey);
-                    primaryStage.setScene(homescreen);
                  }
              }
         });
@@ -330,6 +371,7 @@ public class BasicBoard extends Application {
                  primaryStage.setScene(homescreen);
                  } else {
                      ConstRec.limitsecond = surekind;
+                     homepage.limitseconds.setText(String.valueOf(surekind));
                      ((TCPListener)listener).sendmessage("restart");
                      state.restart();
                      quxiao();
@@ -359,6 +401,7 @@ public class BasicBoard extends Application {
                         state.backtohistory(listener.player_turn^1);         
                         ((TCPListener)listener).sendmessage("yeshui");
                  } else if (messagekind == 0){
+                      primaryStage.setScene(homescreen);
                      clock.stop();
                         if (state.kind>0)
                            ((AiListener)listener).stop();
@@ -366,17 +409,12 @@ public class BasicBoard extends Application {
                            ((TCPListener)listener).stop();
                        }
                        quxiao();
-
-                       //homepage.resetsize(ConstRec.maxsizex,ConstRec.maxsizey);
-                       primaryStage.setScene(homescreen);
-                 
+                       
                  }
              }
         });
         
-        vb.getChildren().addAll(load,save,back,backhome);
- 
-
+        vb.getChildren().addAll(load,cb,save,back,backhome);
 
         clock.setFatherListener(listener);
         if (kind>0) clock.setVisible(false);
@@ -425,8 +463,8 @@ public class BasicBoard extends Application {
         //StackPane rootpane = new StackPane(root);
         gamescreen = new Scene(root,Color.GREEN);
         canvas.setscreen(gamescreen);
-        gamescreen.setCursor(Cursor.NONE);
-               resetsize();
+        canvas.setCursor(Cursor.NONE);
+        resetsize();
         clock.getTransforms().add(new Scale(0.25f, 0.25f, 0, 0));
 
         primaryStage.setScene(gamescreen);
@@ -441,6 +479,8 @@ public class BasicBoard extends Application {
         if (!firstset){
            return;
         }
+
+        
         firstset = false;
         primaryStage.heightProperty().addListener(new ChangeListener<Number>() {  
             @Override
@@ -485,9 +525,11 @@ public class BasicBoard extends Application {
                 bt1 = load.disableProperty().getValue();   
                 bt2 = save.disableProperty().getValue();
                 bt3 = back.disableProperty().getValue();
+                bt4 = backhome.disableProperty().getValue();
                 load.setDisable(true);
                save.setDisable(true);
                back.setDisable(true);
+               //backhome.setDisable(true);
               }
         });
     }
@@ -498,11 +540,24 @@ public class BasicBoard extends Application {
         load.setDisable(bt1);
         save.setDisable(bt2);
         back.setDisable(bt3);
+        //backhome.setDisable(bt4);
                       }
         });
     }
 
     
+    public void updatecb(){
+        File Dir = new File(storepath);//Homepage.class.getResource("/record/23.chess").toExternalForm());
+        //System.out.println(Dir.exists());
+        list = Dir.list();	   //列出当前目录下的文件
+        //System.out.println(list);
+        if (list.length>0){
+           /* for (int i =0 ; i < list.length; ++ i){
+                System.out.println(list[i]);
+            }*/
 
-    
+            cb.setItems(FXCollections.observableArrayList(list));
+            load.setDisable(false);
+        } else load.setDisable(true);
+    }
 }

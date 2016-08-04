@@ -7,6 +7,7 @@ package Homepage;
 
 import ChessBoard.BasicBoard;
 import ChessBoard.ConstRec;
+import java.io.File;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
@@ -45,7 +46,7 @@ import javafx.util.Duration;
  * @author meepo
  */
 public class Homepage extends Group{
-    public Button b1,b2,b3,b4,b5,b6,b7,b9,b10,connect;
+    public Button b1,b2,b3,b4,b5,b6,b7,b9,b10,connect,musicButton;
     public Label l1,l2;
     public Text titleText;
     public BasicBoard basicBoard;
@@ -55,7 +56,7 @@ public class Homepage extends Group{
     boolean b4click = false;
     boolean b9click = false;        //作为服务器按钮
     boolean b10click = false;      //作为客户端按钮
-    
+    boolean musicon = true;
     public TextField ip,port,limitseconds;
 
     VBox aibuttons;
@@ -63,6 +64,7 @@ public class Homepage extends Group{
     HBox limittime,b910;
     ImageView imageView,imageView2;
     Image image;
+    String recipString = new String("127.0.0.1");
     public Homepage(BasicBoard basicBoard){
 
         this.basicBoard = basicBoard;
@@ -90,8 +92,8 @@ public class Homepage extends Group{
         b9 = new Button("开启服务");
         b10 = new Button("连接服务");
         b4 = new Button("Settings");
-
-        Image image = new Image(Homepage.class.getResource( "/Resource/jiantou2.png").toExternalForm());
+        musicButton =  new Button("m");
+        Image image = new Image(Homepage.class.getResource( File.separator+"Resource"+File.separator+"jiantou2.png").toExternalForm());
         imageView = new ImageView(image);
         //imageView.setPreserveRatio(true);
         imageView.fitHeightProperty().bind(basicBoard.primaryStage.heightProperty().divide(10));
@@ -146,37 +148,37 @@ public class Homepage extends Group{
         limittime.getChildren().addAll(l1,limitseconds);
         getChildren().add(limittime);
         aibuttons.setVisible(false);
-        FadeTransition ftai = new FadeTransition(Duration.millis(300), aibuttons);  
+        FadeTransition ftai = new FadeTransition(Duration.millis(500), aibuttons);  
         ftai.setFromValue(0);  
         ftai.setToValue(1);  
         
         imageView.setVisible(false);
-        FadeTransition ft8 = new FadeTransition(Duration.millis(100), imageView);  
+        FadeTransition ft8 = new FadeTransition(Duration.millis(200), imageView);  
         ft8.setFromValue(0);  
         ft8.setToValue(1);  
 
         b9.setVisible(false);
-        FadeTransition ft9 = new FadeTransition(Duration.millis(300), b9);  
+        FadeTransition ft9 = new FadeTransition(Duration.millis(500), b9);  
         ft9.setFromValue(0);  
         ft9.setToValue(1);  
         
         b10.setVisible(false);
-        FadeTransition ft10 = new FadeTransition(Duration.millis(300), b10);  
+        FadeTransition ft10 = new FadeTransition(Duration.millis(500), b10);  
         ft10.setFromValue(0);  
         ft10.setToValue(1);  
 
         imageView2.setVisible(false);
-        FadeTransition ft11 = new FadeTransition(Duration.millis(100), imageView2);  
+        FadeTransition ft11 = new FadeTransition(Duration.millis(200), imageView2);  
         ft11.setFromValue(0);  
         ft11.setToValue(1);  
 
         vbip.setVisible(false);
-        FadeTransition ftvbip = new FadeTransition(Duration.millis(300), vbip);  
+        FadeTransition ftvbip = new FadeTransition(Duration.millis(500), vbip);  
         ftvbip.setFromValue(0);  
         ftvbip.setToValue(1);  
         
         limittime.setVisible(false);
-        FadeTransition ftlimittime = new FadeTransition(Duration.millis(300), limittime);  
+        FadeTransition ftlimittime = new FadeTransition(Duration.millis(500), limittime);  
         ftlimittime.setFromValue(0);  
         ftlimittime.setToValue(1);  
         
@@ -229,6 +231,10 @@ public class Homepage extends Group{
                 b10click = false;
                 if (!b9click){
                     vbip.setVisible(true);
+                    //ip.setVisible(false);
+                    //hb.setVisible(false);
+                    recipString = ip.getText();
+                    ip.setText("127.0.0.1");
                     ip.setEditable(false);
                     ftvbip.play();
                 } else{
@@ -241,29 +247,14 @@ public class Homepage extends Group{
          b10.setOnAction(new EventHandler<ActionEvent>(){
              public void handle(ActionEvent me) {
                 System.out.println("button10");
-                xianshou.setVisible(true);
-                b9click = false;
-                if (!b10click){
-                    vbip.setVisible(true);     
-                    ip.setEditable(true);
-                    ftvbip.play();
-                   
-                } else{
-                    vbip.setVisible(false);
-                }
-                b10click ^= true;
-             
-             }
-        });
-                 
-         b10.setOnAction(new EventHandler<ActionEvent>(){
-             public void handle(ActionEvent me) {
-                System.out.println("button10");
+                
+                ip.setEditable(true);
+                ip.setText(recipString);
                 xianshou.setVisible(false);
                 b9click = false;
                 if (!b10click){
                     vbip.setVisible(true);     
-                    ip.setEditable(true);
+                    hb.setVisible(true);
                     ftvbip.play();
                 } else{
                     vbip.setVisible(false);
@@ -286,7 +277,7 @@ public class Homepage extends Group{
                 } else{
                     b9.setVisible(false);
                     b10.setVisible(false);
-                    imageView.setVisible(false);
+                    imageView2.setVisible(false);
                    vbip.setVisible(false);
                    b9click = false;
                    b10click = false;
@@ -309,6 +300,7 @@ public class Homepage extends Group{
                         tmp =  Integer.valueOf(limitseconds.getText());
                     }catch(Exception e){
                         System.out.println("不是正整数");
+                        limitseconds.setText(String.valueOf(ConstRec.limitsecond));
                     }
                     if (tmp>0)
                         ConstRec.limitsecond = tmp;
@@ -326,6 +318,21 @@ public class Homepage extends Group{
                 }
              }
        });
+        getChildren().add(musicButton);
+        musicButton.setOnAction(new EventHandler<ActionEvent>(){
+             public void handle(ActionEvent me) {
+                 if (musicon){
+                basicBoard.music.stop();
+               //musicButton.setText("music on");
+                 }
+                 else {
+                     basicBoard.music.start();
+                                  //   musicButton.setText("music off");
+
+                 }
+                 musicon^= true;
+             }
+        });
         resetsize();
     }
     public void resetsize(){
@@ -340,7 +347,7 @@ public class Homepage extends Group{
         titleText.setLayoutX(maxsizex/3);
         titleText.setLayoutY(maxsizey/3.5);
         buttons.setSpacing(maxsizey/50);
-        System.out.println(maxsizex);
+        //System.out.println(maxsizex);
         buttons.setLayoutX(maxsizex/3);
         buttons.setLayoutY(maxsizey/2);
         b1.setMinSize(maxsizex/5*2, maxsizey/10);
@@ -360,6 +367,10 @@ public class Homepage extends Group{
         b910.setLayoutY(maxsizey*7/10);
         b9.setMinSize(maxsizex/12.5, maxsizey/16.67);
         b10.setMinSize(maxsizex/12.5, maxsizey/16.67);
+        musicButton.setMinSize(maxsizex/12.5, maxsizey/16.67);
+        //musicButton.setLayoutX(maxsizex*13/10);
+        //musicButton.setLayoutY(0);
+        
         
         imageView.setX(maxsizex*29/40);
         imageView.setY(maxsizey/2);
@@ -374,7 +385,7 @@ public class Homepage extends Group{
         Font fontseconds = new Font("Tahoma",15);
         l1.setFont(fontseconds);limitseconds.setFont(fontseconds);
         limittime.setLayoutX(maxsizex/3-maxsizex/4-maxsizex/20);
-        limittime.setLayoutY(maxsizey*7/8                                                           );
+        limittime.setLayoutY(maxsizey*7/8 );
                
     }
 }

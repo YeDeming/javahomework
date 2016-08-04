@@ -28,13 +28,14 @@ public class TCPUnit {
     BasicBoard basicBoard;
     Clock clock;
     
-    TCPUnit(BufferedReader brInFromother,DataOutputStream dosOutToother, ChessState state,int myturn,BasicBoard basicBoard,Clock clock){
+    TCPUnit(BufferedReader brInFromother,DataOutputStream dosOutToother, ChessState state,int myturn,BasicBoard basicBoard,Clock clock,TCPListener listener){
         this.brInFromother = brInFromother;
         this.dosOutToother = dosOutToother;
         this.state = state;
         this.myturn = myturn;
         this.basicBoard = basicBoard;
         this.clock = clock;
+        this.listener = listener;
         if(myturn==0) 
             clock.play();
     }
@@ -92,8 +93,9 @@ public class TCPUnit {
            
         }
         }catch (Exception e){
+            if (listener!=null)
             listener.webinterrupt();
-                //System.out.println("连接已断开");
+                System.out.println("连接已断开");
         }
     }
         public void sendmessage(int x,int y) {
@@ -101,8 +103,9 @@ public class TCPUnit {
             try{
                     dosOutToother.writeBytes(string);
             }catch (Exception e){
-                      //      System.out.println("连接已断开");
-            listener.webinterrupt();
+                           System.out.println("连接已断开");
+                      if (listener!=null)
+                             listener.webinterrupt();
 
             }
     }
@@ -112,8 +115,9 @@ public class TCPUnit {
             try{
                     dosOutToother.writeBytes(string);
             }catch (Exception e){
-                    //        System.out.println("连接已断开");
-            listener.webinterrupt();
+                         System.out.println("连接已断开");
+                  if (listener!=null)
+                    listener.webinterrupt();
 
             }
     }

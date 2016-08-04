@@ -27,10 +27,11 @@ public class TCPServer extends Task<Integer>{
     public TCPUnit unit;
     Socket socketServer ;
     ServerSocket ssocket ;
-    public TCPServer(ChessState state,int port,boolean xianshou,Clock clock) throws Exception{
+    public TCPServer(ChessState state,int port,boolean xianshou,TCPListener listener,Clock clock) throws Exception{
         this.state = state;
         this.port =port;
         this.clock = clock;
+        this.listener = listener;
         if (xianshou) myturn = 0;
         else myturn = 1;
     }        
@@ -53,16 +54,18 @@ public class TCPServer extends Task<Integer>{
         dosOutToClient = new DataOutputStream(socketServer.getOutputStream());
         System.out.println("connected!");
         //state.restart();
-
+        try{
         dosOutToClient.writeBytes(myturn + "\n");
         dosOutToClient.writeBytes(ConstRec.limitsecond + "\n");
+        } catch (Exception e){
+                                     System.out.println("连接已断开");
 
-        unit = new TCPUnit(brInFromeClinet,dosOutToClient,state,myturn,basicBoard,clock);
+            if (listener!=null)
+                listener.webinterrupt();
+        }
+        unit = new TCPUnit(brInFromeClinet,dosOutToClient,state,myturn,basicBoard,clock,listener);
         unit.work();
-         /*while (state.finish==-2){
-                strSocket = brInFromeClinet.readLine();
-                System.out.println("Receive: " + strSocket);
-         }*/
+        
         socketServer.close();
         return 0;
     }

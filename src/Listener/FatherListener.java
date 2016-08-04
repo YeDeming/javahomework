@@ -8,10 +8,10 @@ import javafx.scene.input.MouseEvent;
 
 abstract public class FatherListener{
 
-    final static int border = ConstRec.border;
+    //final static int border = ConstRec.border;
     final static int maxn = ConstRec.maxn;;
-    final static int gridsize = ConstRec.gridsize;;
-    final static int maxsize = 2*border+maxn*gridsize;
+    //final static int gridsize = ConstRec.gridsize;
+    //final static int maxsize = 2*border+maxn*gridsize;
     public ChessState state;
     Button huiButton;
     public int player_turn;

@@ -1,6 +1,7 @@
 package ChessBoard;
 
 import Listener.AiListener;
+
 import java.awt.FileDialog;
 import java.io.File;
 import java.util.*;
@@ -169,7 +170,7 @@ public class ChessState extends SampleChessState{
             if (avaidcnt==0) pass();
 
             
-            if (count==maxn || avaidcnt == 0){	
+            if (count==maxnsqr || avaidcnt == 0){	
                 finish = getwinner();
                 basicBoard.surekind = 0;
 
@@ -184,10 +185,10 @@ public class ChessState extends SampleChessState{
             updateavaid();
     }
 
-    public void loadchess() {
-        File file = fileChooser.showOpenDialog(primaryStage.getOwner());
-        if (file == null) return;
-
+    public void loadchess(String path) {
+        File file = new File(path);//fileChooser.showOpenDialog(primaryStage.getOwner());
+        //if (file == null) return;
+        System.out.println(path);
         try{
             Scanner console = new Scanner(file);
             kind = console.nextInt();
@@ -208,12 +209,14 @@ public class ChessState extends SampleChessState{
         savehistory();
         updateavaid();
         panel.repaint();
-        basicBoard.clock.restart();
+        //basicBoard.clock.restart();
     }
 
     public void savechess(){
-         
+        fileChooser.setInitialDirectory(new File(ConstRec.storepath));//.setCurrentDirectory(fsv.getHomeDirectory());
+        
         File file = fileChooser.showSaveDialog(primaryStage.getOwner());
+        
         if (file == null) return;
 
             try{

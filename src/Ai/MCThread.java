@@ -24,7 +24,7 @@ public class MCThread extends  Task<Integer>{
               @Override 
               protected Integer call() throws Exception {
             //public void run(){
-                    //System.out.println("run");
+                    //System.out.println(data.limit_time);
                     for (times = 1; times < data.maxstep; ++times) {
                             if ((times & 32) == 0 && System.currentTimeMillis() - data.begin_time > data.limit_time)
                                     break;

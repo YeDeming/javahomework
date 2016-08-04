@@ -2,6 +2,7 @@ package Listener;
 
 import ChessBoard.ChessState;
 import ChessBoard.Clock;
+import ChessBoard.ConstRec;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -16,16 +17,21 @@ public class SelftwoMouseListener  extends FatherListener{
 
     public void next(int rawx,int rawy) {
             // TODO Auto-generated method stub
-            int x = (rawx-border);
-            int y = (rawy-border);
+        int maxsize = ConstRec.maxsize;
+        int border = ConstRec.border;
+        int gridsize = ConstRec.gridsize;
+            int x = (rawx-ConstRec.border);
+            int y = (rawy-ConstRec.border);
+            
 
+            
        if (rawx>=maxsize+border || rawy>=maxsize+border) return;
 
-            //System.out.println(y);
-            if (x%gridsize==0 || y%gridsize==0) return;
+       if (x%gridsize==0 || y%gridsize==0) return;
             x /= gridsize;
             y /= gridsize;
-        if (x<0 || y<0 || x>=maxn || y>=maxn) return;
+            if (x<0 || y<0 || x>=ConstRec.maxn || y>=ConstRec.maxn) return;
+       System.out.println(x + " " + y);
 
             if (state.flag[x][y]!=2) return;
             int lastturn = state.turn;

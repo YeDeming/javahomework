@@ -22,7 +22,7 @@ public class TCPClient extends Task<Integer>{
     BufferedReader brInFromServer;
     Socket socketClient;
     String ip;
-    int port;
+    int port,time;
     TCPListener listener;
     BasicBoard basicBoard;
     Clock clock;
@@ -53,20 +53,28 @@ public class TCPClient extends Task<Integer>{
 
         brInFromServer = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
         dosOutToServer  = new DataOutputStream(socketClient.getOutputStream());
-   
+        try{
         strSocket = brInFromServer.readLine();
+
+        
         myturn = 1-Integer.valueOf(strSocket);
         System.out.println("myturn " + myturn);
         listener.player_turn = myturn;
         
         strSocket = brInFromServer.readLine();
-        int time = Integer.valueOf(strSocket);
+        time = Integer.valueOf(strSocket);
+        }catch (Exception e){
+                                     System.out.println("连接已断开");
+
+            if (listener!=null)
+                listener.webinterrupt();
+        }
         basicBoard.protect();
         basicBoard.surekind = time;
         basicBoard.message("将思考时间设置为"+strSocket+"s");
         basicBoard.deprotect();
         
-        unit = new TCPUnit(brInFromServer, dosOutToServer, state,myturn,basicBoard,clock);
+        unit = new TCPUnit(brInFromServer, dosOutToServer, state,myturn,basicBoard,clock,listener);
         unit.work();
         socketClient.close();
 

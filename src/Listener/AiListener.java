@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import Ai.*;
 import ChessBoard.BasicBoard;
 import ChessBoard.ChessState;
+import ChessBoard.ConstRec;
 
 public class AiListener  extends FatherListener{
 
@@ -48,6 +49,9 @@ public class AiListener  extends FatherListener{
         // TODO Auto-generated method stub
         if (player_turn!=state.turn)
             return;
+        int maxsize = ConstRec.maxsize;
+        int border = ConstRec.border;
+        int gridsize = ConstRec.gridsize;
        if (rawx>=maxsize+border || rawy>=maxsize+border) return;
 
         int x = (rawx-border);

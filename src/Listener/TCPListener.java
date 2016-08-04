@@ -3,6 +3,7 @@ package Listener;
 import ChessBoard.BasicBoard;
 import ChessBoard.ChessState;
 import ChessBoard.Clock;
+import ChessBoard.ConstRec;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -30,7 +31,7 @@ public class TCPListener  extends FatherListener{
             this.mykind = mykind;
             try{
                 if (mykind == -1){
-                    server = new TCPServer(state,port,xianshou,clock);
+                    server = new TCPServer(state,port,xianshou,this,clock);
                     th = new Thread(server);
                     th.setDaemon(true);
                 } else {
@@ -46,11 +47,13 @@ public class TCPListener  extends FatherListener{
     public void stop(){
         try{
         if (mykind==-1){
+            
                 server.stop();
             } else{
                 client.stop();
            }
         }catch(Exception e){}
+        if (th!=null)
         th.stop();
            
     }
@@ -61,7 +64,9 @@ public class TCPListener  extends FatherListener{
     
     public void next(int rawx,int rawy) {
             // TODO Auto-generated method stub
-
+            int border = ConstRec.border;
+            int gridsize = ConstRec.gridsize;
+            int maxsize = ConstRec.maxsize;
             if (player_turn!=state.turn)
                 return;
             int x = (rawx-border);
@@ -119,10 +124,19 @@ public class TCPListener  extends FatherListener{
     }
     
     public void webinterrupt(){
+        System.out.println("web");
         if (webisalive){
-            stop();
+
+            
+            //stop();
+
+            
             webisalive = false;
+
+            
             basicBoard.messagekind = 0;
+
+            
             basicBoard.message("连接已断开");
             
         }

@@ -13,7 +13,7 @@ import ChessBoard.ConstRec;
 public class MCAi extends FatherAi {
         Random random;
         final static int maxstep = ConstRec.maxstep;
-        final static int limit_time = (int) (ConstRec.limitsecond*900);
+        int limit_time = (int) (ConstRec.limitsecond*900);
         final static double c = 1.414;
         double sqrtArray[] = new double[maxstep];
         double inv[] = new double[maxstep];
@@ -24,6 +24,8 @@ public class MCAi extends FatherAi {
         public MCAi(ChessState state, int ai_turn,BasicBoard basicBoard) {
                 super(state,ai_turn,basicBoard);
                 // TODO Auto-generated constructor stub
+                //limit_time = (int) (ConstRec.limitsecond*900);
+
                 random = new Random();
                 for (int i = 1; i < maxstep; ++i) {
                         sqrtArray[i] = 1.0 / Math.sqrt(i);
